@@ -20,4 +20,4 @@
 ### Environments
   
   - Simple Dyna maze (9x6)
-  - Dyna maze with dynamic obstacles
+  - Dyna maze with dynamic obstacles (9x6)
