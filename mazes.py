@@ -1,3 +1,5 @@
+import numpy as np
+
 ACTIONS = {
     "N": (0, 1),
     "S": (0, -1),
@@ -22,6 +24,7 @@ class SimpleMaze:
                           (7, 5), (7, 6), (7, 7)]
 
         self.agent_position = self.start
+        self.actions_counter = 0
 
     def getActions(self):
         return (list(ACTIONS.keys()))
@@ -32,16 +35,29 @@ class SimpleMaze:
         """
         x, y = position
         return x >= self.WIDTH or x < 0 or y >= self.HEIGHT or y < 0
+    
+    def apply_noise(self, action):
+        """
+        Replaces an action by another one
+        with a probability of 20%
+        """
+        if np.random.random() < 0.2:
+            return np.random.choice([new_action for new_action in self.getActions() if new_action != action])
+
+        return action
 
     def step(self, action):
         """
         Makes the agent move.
         Returns the reward his new position
         """
+
+        action = self.apply_noise(action)
+
         new_pos_x = self.agent_position[0] + ACTIONS[action][0]
         new_pos_y = self.agent_position[1] + ACTIONS[action][1]
 
-        if self.isDone():
+        if (new_pos_x, new_pos_y) == self.goal:
             self.agent_position = (new_pos_x, new_pos_y)
             reward = REWARD_GOAL
 
@@ -53,13 +69,14 @@ class SimpleMaze:
             self.agent_position = (new_pos_x, new_pos_y)
             reward = REWARD_MOVE
 
+        self.actions_counter += 1
         return reward, self.agent_position
 
     def isDone(self):
         """
         Checks if the agent has reached the goal
         """
-        return self.agent_position == self.goal
+        return self.agent_position == self.goal or self.actions_counter == 1000
 
 
 if __name__ == "__main__":
