@@ -45,7 +45,7 @@ class Algorithm():
         """
         probabilities = self.getBoltzmannProbabilities(pos)
         seq = sorted(probabilities)
-        ranks = [seq.index(p) for p in probabilities]
+        ranks = np.array([seq.index(p) for p in probabilities])
         return ranks
 
     def getMostProbableAction(self, pos=None):
