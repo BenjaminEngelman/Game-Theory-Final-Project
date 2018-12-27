@@ -16,14 +16,14 @@ def simpleChoice(values, temp):
 def majorityVote(algorithms, temp):
     bestActions = [algo.getMostProbableAction() for algo in algorithms]
     counter = Counter(bestActions)
-    counts = [counter[action] for action in [0, 1, 2, 3]]
+    counts = np.array([counter[action] for action in [0, 1, 2, 3]])
     return boltzmannChoice(counts, temp)
     
 
 def rankVote(algorithms, temp):
     allRanks = np.array([algo.getActionRanking() for algo in algorithms])
-    probailities = allRanks.sum(axis = 0)
-    return boltzmannChoice(probailities, temp)
+    probabilities = allRanks.sum(axis = 0)
+    return boltzmannChoice(probabilities, temp)
 
 
 
