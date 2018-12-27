@@ -137,7 +137,30 @@ class SARSA(Algorithm):
 
     
 
+class ActorCritic(Algorithm):
+    ALPHA = 0.1
+    BETA = 0.2 
+    GAMMA = 0.95
+    TEMP = 1
 
+    def __init__(self, maze):
+        self.pos = maze.start
+        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
+        self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+    
+    def getValues(self, pos):
+        x, y = pos
+        return self.pValues[x, y]
+    
+    def update(self, reward, newPos, action):
+        oldX, oldY = self.pos
+        newX, newY = newPos
+
+        self.vValues[oldX, oldY] +=  self.BETA * (reward + self.GAMMA * vValues[newX, newY] - self.vValues[oldX, oldY])
+        self.pValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * vValues[newX, newY] - self.vValues[oldX, oldY]) 
+        
+        
+        self.pos = newPos
 
 
 
