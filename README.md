@@ -16,7 +16,7 @@
   - [ ] Exp 2 (Partially obsebable maze + neural net)
   - [ ] Exp 3 (Dynamic obstacles maze + neural net)
   - [ ] Exp 4 (Dynamic Goal maze + neural net) 
-  - [ ] Exp 5 (Generalize maze + neural net)
+  - [ ] Exp 5 (Generalized maze + neural net)
 
 ### Base Algorithms
 
@@ -29,7 +29,7 @@
  ### Ensemble methods
  
   - [x] Majority voting
-  - [x] rank voting
+  - [x] Rank voting
   - [x] Boltzmann multiplication
   - [x] Boltzmann addition
 
