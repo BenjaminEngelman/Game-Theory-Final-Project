@@ -1,10 +1,10 @@
 import numpy as np
 
 ACTIONS = {
-    "N": (0, 1),
-    "S": (0, -1),
-    "E": (1, 0),
-    "W": (-1, 0)
+    0: (0, 1),
+    1: (0, -1),
+    2: (1, 0),
+    3: (-1, 0)
 }
 
 PENALTY = -2
@@ -35,7 +35,7 @@ class SimpleMaze:
         """
         x, y = position
         return x >= self.WIDTH or x < 0 or y >= self.HEIGHT or y < 0
-    
+
     def apply_noise(self, action):
         """
         Replaces an action by another one
