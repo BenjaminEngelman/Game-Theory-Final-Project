@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 WIDTH = 9
 HEIGHT = 6
@@ -82,18 +83,52 @@ class Maze:
         """
         return self.agent_position == self.goal or self.actions_counter == 1000
 
+    def neighbors(self, pos):
+        """
+        Returns all the neighbors of a given position: left, right, up and down.
+        These must be valid: in the grid and not obstacles.
+        """
+        x, y = pos
+        neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+        return [n for n in neighbors if not self.isOutOfBounds(n) and n not in self.obstacles]
+
+
+    def hasSolution(self):
+        """ 
+        Returns whether there is a path from the start to the goal.
+        """
+        toExplore = set([self.start])
+        explored = set([])
+        while toExplore:
+            pos = toExplore.pop()
+            if pos == self.goal:
+                return True
+
+            explored.add(pos)
+
+            for neighbor in self.neighbors(pos):
+                if neighbor not in explored:
+                    toExplore.add(neighbor)
+        
+        return False
+            
+
+
     def render(self):
+        print("-" * (WIDTH + 2))
         for y in range(HEIGHT - 1, -1, -1):
+            print('|', end="")
             for x in range(WIDTH):
                 if self.agent_position == (x, y):
-                    print('A', end=" ")
+                    print('A', end="")
                 elif (x, y) in self.obstacles:
-                    print('X', end=" ")
+                    print('X', end="")
                 elif (x, y) == self.goal:
-                    print('G', end=" ")
+                    print('G', end="")
                 else:
-                    print('O', end=" ")
-            print('\n')
+                    print(' ', end="")
+            print('|')
+        print("-" * (WIDTH + 2))
 
 
 #########################
@@ -133,16 +168,42 @@ def createDynamicObstaclesMaze():
     Creates a Maze with between 4 and 8 obstacles placed 
     at random positions
     """
-    # TODO
-    pass
+    numObstacles = np.random.choice([4, 5, 6, 7, 8])
+    start = (0, 3)
+    goal = (8, 5)
+
+    availablePos = [(x, y) for x in range(WIDTH) for y in range(HEIGHT)
+                    if (x, y) != start and (x, y) != goal]
+
+    while True:
+        # sample returns a k-element sample from the population (no replacement)
+        obstacles = random.sample(availablePos, numObstacles)
+        maze = Maze(start, goal, obstacles)
+        if maze.hasSolution():
+            return maze
+
 
 
 def createGeneralizedMaze():
-    # TODO
-    pass
+    """
+    Creates a Maze with a random goal and between 4 and 8 obstacles placed 
+    at random positions 
+    """
+    numObstacles = np.random.choice([4, 5, 6, 7, 8])
+    start = (0, 3)
+    availablePos = [(x, y) for x in range(WIDTH) for y in range(HEIGHT)
+                    if (x, y) != start]
+
+    while True:
+        # sample returns a k-element sample from the population (no replacement)
+        positions = random.sample(availablePos, numObstacles)
+        goal, obstacles = positions[0], positions[1:]
+        maze = Maze(start, goal, obstacles)
+        if maze.hasSolution():
+            return maze
 
 
 if __name__ == "__main__":
-    env = createDynamicGoalMaze()
+    env = createGeneralizedMaze()
     # print(reward, new_state)
     env.render()

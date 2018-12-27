@@ -37,5 +37,5 @@
   
   - [x] Simple Dyna maze (9x6)
   - [x] Dyna maze with Dynamic Goal (9x6)
-  - [ ] Dyna maze with dynamic obstacles (9x6)
-  - [ ] Generalized maze (9x6)
+  - [x] Dyna maze with dynamic obstacles (9x6)
+  - [x] Generalized maze (9x6)
