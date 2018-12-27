@@ -18,6 +18,13 @@ def majorityVote(algorithms, temp):
     counter = Counter(bestActions)
     counts = [counter[action] for action in [0, 1, 2, 3]]
     return boltzmannChoice(counts, temp)
+    
+
+def rankVote(algorithms, temp):
+    allRanks = np.array([algo.getActionRanking() for algo in algorithms])
+    probailities = allRanks.sum(axis = 0)
+    return boltzmannChoice(probailities, temp)
+
 
 
 def boltzmannMultVoting(algorithms, temp):
