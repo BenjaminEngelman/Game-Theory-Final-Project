@@ -27,12 +27,12 @@ def rankVote(algorithms, temp):
 
 
 
-def boltzmannMultVoting(algorithms, temp):
+def boltzmannMultVote(algorithms, temp):
     actionsProbabilities = np.array([algo.getBoltzmannProbabilities() for algo in algorithms])
     prefs = np.prod(actionsProbabilities, axis=0)
     return simpleChoice(prefs, temp)
 
-def boltzmannAddVoting(algorithms, temp):
+def boltzmannAddVote(algorithms, temp):
     actionsProbabilities = np.array([algo.getBoltzmannProbabilities() for algo in algorithms])
     prefs = np.sum(actionsProbabilities, axis=0)
     return simpleChoice(prefs, temp)
