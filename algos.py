@@ -191,7 +191,58 @@ class ACLA(Algorithm):
 
 
     
+class QVLearning(Algorithm):
 
+    ALPHA = 0.2
+    BETA = 0.2
+    GAMMA = 0.9
+    TEMP = 1
+
+    def __init__(self, maze):
+        self.pos = maze.start
+        self.pos = maze.start
+        self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
+    
+     def getValues(self, pos):
+        x, y = pos
+        return self.qValues[x, y]
+    
+    def update(self, reward, newPos, action):
+            oldX, oldY = self.pos
+            newX, newY = newPos
+            
+            self.vValues[oldX, oldY] += self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
+            self.qValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * self.vValues[newX, newY] - self.qValues[oldX, oldY, action]) 
+            
+            self.pos = newPos
+
+class ActorCritic(Algorithm):
+    ALPHA = 0.1
+    BETA = 0.2 
+    GAMMA = 0.95
+    TEMP = 1
+
+    def __init__(self, maze):
+        self.pos = maze.start
+        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
+        self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+    
+    def getValues(self, pos):
+        x, y = pos
+        return self.pValues[x, y]
+    
+    def update(self, reward, newPos, action):
+        oldX, oldY = self.pos
+        newX, newY = newPos
+
+        self.vValues[oldX, oldY] +=  self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
+        self.pValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY]) 
+        
+        
+        self.pos = newPos
+   
+    
 
 
 
