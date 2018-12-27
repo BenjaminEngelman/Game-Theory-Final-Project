@@ -7,24 +7,28 @@ def boltzmannChoice(values, temp):
     probabilities = boltzmann(values, temp)
     return np.random.choice([0, 1, 2, 3], p=probabilities)
     
-def simpleChoice(values):
-    pass
+def simpleChoice(values, temp):
+    transformedValues = np.power(values, 1 / temp)
+    probabilities = transformedValues / transformedValues.sum()
+    return np.random.choice([0, 1, 2, 3], p=probabilities)
 
 
-def majorityVote(algorithms):
+def majorityVote(algorithms, temp):
     bestActions = [algo.getMostProbableAction() for algo in algorithms]
     counter = Counter(bestActions)
     counts = [counter[action] for action in [0, 1, 2, 3]]
-    return boltzmannChoice(counts)
+    return boltzmannChoice(counts, temp)
 
 
-
-
-
-
-def boltzmannMultVoting(algorithms):
+def boltzmannMultVoting(algorithms, temp):
     actionsProbabilities = np.array([algo.getBoltzmannProbabilities() for algo in algorithms])
     prefs = np.prod(actionsProbabilities, axis=0)
+    return simpleChoice(prefs, temp)
+
+def boltzmannAddVoting(algorithms, temp):
+    actionsProbabilities = np.array([algo.getBoltzmannProbabilities() for algo in algorithms])
+    prefs = np.sum(actionsProbabilities, axis=0)
+    return simpleChoice(prefs, temp)
 
 
 
