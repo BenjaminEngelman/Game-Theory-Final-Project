@@ -14,7 +14,7 @@ class MazeProperties:
 class Algorithm():
 
     ##############################################
-    #   EACH ALGORITHM NEEDS TO IMPLEMENT        #
+    #     EACH ALGORITHM NEEDS TO IMPLEMENT      #
     #   THESE TWO METHODS AND HAVE A TEMP FIELD  #
     ##############################################
 
@@ -204,7 +204,7 @@ class QVLearning(Algorithm):
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
         self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
     
-     def getValues(self, pos):
+    def getValues(self, pos):
         x, y = pos
         return self.qValues[x, y]
     
