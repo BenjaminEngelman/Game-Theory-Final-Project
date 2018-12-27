@@ -19,9 +19,9 @@ class SimpleMaze:
         self.HEIGHT = 6
 
         self.start = (0, 3)
-        self.goal = (8, 7)
+        self.goal = (8, 5)
         self.obstacles = [(2, 2), (2, 3), (2, 4), (5, 1),
-                          (7, 5), (7, 6), (7, 7)]
+                          (7, 3), (7, 4), (7, 5)]
 
         self.agent_position = self.start
         self.actions_counter = 0
@@ -81,9 +81,24 @@ class SimpleMaze:
         Checks if the agent has reached the goal
         """
         return self.agent_position == self.goal or self.actions_counter == 1000
+    
+    def render(self):
+        for y in range(self.HEIGHT - 1, -1, -1):
+            for x in range(self.WIDTH):
+                if self.agent_position == (x, y): 
+                    print('A', end=" ")
+                    pass
+                elif (x, y) in self.obstacles:
+                    print('X', end=" ")
+                    pass
+                else:
+                    print('O', end=" ")
+                    pass
+            print('\n')
 
 
 if __name__ == "__main__":
     env = SimpleMaze()
     reward, new_state = env.step(0)
-    print(reward, new_state)
+    # print(reward, new_state)
+    env.render()

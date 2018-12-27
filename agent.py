@@ -1,7 +1,7 @@
 from algos import *
 from ensembleMethods import *
 from mazes import SimpleMaze
-
+import time
 
 class AlgoParams():
     def __init__(self, alpha=None, beta=None, gamma=None, temp=None):
@@ -34,12 +34,12 @@ class Agent():
                 action = self.ensembleMethod(self.algos, self.temp)
                 reward, new_state = self.maze.step(action)
                 episodeReward += reward
-                
+                # maze.render()
+                                
                 for algo in self.algos:
                     algo.update(reward, new_state, action)
                 
-            print("Done %d" % (i + 1))
-
+            print("Done %d in %d steps" % (i + 1, self.maze.actions_counter))
             rewardsOverTime.append(episodeReward)
             maze.reset()
 
@@ -57,5 +57,9 @@ if __name__ == "__main__":
 
     maze = SimpleMaze()
     agent = Agent(maze, majorityVote, parmasList, temp=1/1.6)
-    rewardsOverTime = agent.learn(100)
+
+    start = time.time()
+    rewardsOverTime = agent.learn(5000)
+    print("Learning process took %d seconds" % (time.time() - start))
+
     print(rewardsOverTime[-10:])
