@@ -56,11 +56,12 @@ class Algorithm():
 
 
 class QLearning(Algorithm):
-    ALPHA = 0.2
-    GAMMA = 0.9
-    TEMP = 1
 
-    def __init__(self, maze):
+    def __init__(self, maze, params):
+        self.ALPHA = params.ALPHA
+        self.GAMMA = params.GAMMA
+        self.TEMP = params.TEMP
+
         self.pos = maze.start
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
 
@@ -85,11 +86,12 @@ class QLearning(Algorithm):
 
 
 class SARSA(Algorithm):
-    ALPHA = 0.2
-    GAMMA = 0.9
-    TEMP = 1
 
-    def __init__(self, maze):
+    def __init__(self, maze, params):
+        self.ALPHA = params.ALPHA
+        self.GAMMA = params.GAMMA
+        self.TEMP = params.TEMP
+
         self.pos = maze.start
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
 
@@ -117,12 +119,13 @@ def allActionsExcept(action):
     return [x for x in [0, 1, 2, 3] if x != action]
 
 class ACLA(Algorithm):
-    ALPHA = 0.005
-    BETA = 0.1
-    GAMMA = 0.99
-    TEMP = 1 / 0.99
 
-    def __init__(self, maze):
+    def __init__(self, maze, params):
+        self.ALPHA = params.ALPHA
+        self.BETA = params.BETA
+        self.GAMMA = params.GAMMA
+        self.TEMP = params.TEMP
+
         self.pos = maze.start
         self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
         self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
@@ -172,12 +175,12 @@ class ACLA(Algorithm):
     
 class QVLearning(Algorithm):
 
-    ALPHA = 0.2
-    BETA = 0.2
-    GAMMA = 0.9
-    TEMP = 1
+    def __init__(self, maze, params):
+        self.ALPHA = params.ALPHA
+        self.BETA = params.BETA
+        self.GAMMA = params.GAMMA
+        self.TEMP = params.TEMP
 
-    def __init__(self, maze):
         self.pos = maze.start
         self.pos = maze.start
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
@@ -202,12 +205,13 @@ class QVLearning(Algorithm):
 
 
 class ActorCritic(Algorithm):
-    ALPHA = 0.1
-    BETA = 0.2
-    GAMMA = 0.95
-    TEMP = 1
 
-    def __init__(self, maze):
+    def __init__(self, maze, params):
+        self.ALPHA = params.ALPHA
+        self.BETA = params.BETA
+        self.GAMMA = params.GAMMA
+        self.TEMP = params.TEMP
+        
         self.pos = maze.start
         self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
         self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
