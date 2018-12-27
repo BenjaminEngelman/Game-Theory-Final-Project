@@ -134,6 +134,61 @@ class SARSA(Algorithm):
         self.pos = newPos
 
 
+def allActionsExcept(action):
+    return [x for x in [0, 1, 2, 3] if x != action]
+
+class ACLA(Algorithm):
+    ALPHA = 0.005
+    BETA = 0.1
+    GAMMA = 0.99
+    TEMP = 1 / 0.99
+
+    def __init__(self, maze):
+        self.pos = maze.start
+        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
+        self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+    
+    def getValues(self, pos):
+        x, y = pos
+        return self.pValues[x, y]
+    
+    def update(self, reward, newPos, action):
+        oldX, oldY = self.pos
+        newX, newY = newPos
+
+        # Update the v values
+        self.vValues[oldX, oldY] += self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
+        
+
+        # Update the P values
+        delta = self.GAMMA * self.vValues[newX, newY] + reward - self.vValues[oldX, oldY]  
+        if delta > 0:
+            self.pValues[oldX, oldY, action] += self.ALPHA * (1 - self.pValues[oldX, oldY, action])
+            for a in allActionsExcept(action):
+                self.pValues[oldX, oldY, action] += self.ALPHA * (0 - self.pValues[oldX, oldY, action])
+
+        else:
+            # Remove ALPHA * pValue for all actions
+            self.pValues[oldX, oldY] -= self.ALPHA * self.pValues[oldX, oldY]
+            
+            # Add ALPHA * fraction for all actions except the action that was used
+            pValuesSum = self.pValues[oldX, oldY].sum()
+            denom = pValuesSum - self.pValues[oldX, oldY, action]
+
+            for a in allActionsExcept(action):
+                if denom > 0:
+                    # Normal case:
+                    num = self.pValues[oldX, oldY, a]
+                    self.pValues[oldX, oldY, action] += self.ALPHA * (num / denom)
+                else:
+                    # Special Rule 1: if denom is <= 0, put 1/3
+                    self.pValues[oldX, oldY, action] = 1 / (4 - 1)
+                    
+        # Special rule 2: p values must be between 0 and 1
+        self.pValues[oldX, oldY, :] =  np.clip(self.pValues[oldX, oldY], 0, 1)
+            
+        self.pos = newPos
+
 
     
 
@@ -154,7 +209,22 @@ class SARSA(Algorithm):
 
 
 
+def isConnected(maze, start, end):
+    toExplore = set([start])
+    explored = set()
+    while toExplore:
+        node = toExplore.pop()
 
+        if node == end:
+            return True
+
+        explored.add(node)
+        for neighbor in neighbors(node):
+            if neighbor not in explored:
+                toExplore.add(neighbor)
+    
+    return False
+        
 
 
 
