@@ -87,13 +87,10 @@ class SimpleMaze:
             for x in range(self.WIDTH):
                 if self.agent_position == (x, y): 
                     print('A', end=" ")
-                    pass
                 elif (x, y) in self.obstacles:
                     print('X', end=" ")
-                    pass
                 else:
                     print('O', end=" ")
-                    pass
             print('\n')
 
 
