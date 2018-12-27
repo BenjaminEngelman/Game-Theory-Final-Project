@@ -1,10 +1,5 @@
 import numpy as np
-
-
-def boltzmann(values, temp):
-    boltzmannValues = np.exp(values / temp)
-    boltzmannProbabilities = boltzmannValues / boltzmannValues.sum()
-    return boltzmannProbabilities
+from helper import boltzmann
 
 
 class MazeProperties:
@@ -15,10 +10,10 @@ class MazeProperties:
 
 class Algorithm():
 
-    ##############################################
-    #     EACH ALGORITHM NEEDS TO IMPLEMENT      #
-    #   THESE TWO METHODS AND HAVE A TEMP FIELD  #
-    ##############################################
+    #################################################
+    #     EACH ALGORITHM NEEDS TO IMPLEMENT         #
+    #   UPDATE AND GETVALUES AND HAVE A TEMP FIELD  #
+    #################################################
 
     # TEMP = ...
 
@@ -28,14 +23,14 @@ class Algorithm():
         """
         return NotImplementedError
 
-    def getValues(self):
+    def getValues(self, pos):
         """
         Returns the value of each action, which is different for each algorithm,
         and represents how good each action is.
         """
         return NotImplementedError
 
-    def getBoltzmannProbabilities(self, pos):
+    def getBoltzmannProbabilities(self, pos=None):
         """
         Returns a list containing each action's probability 
         (which is calculated using Boltzmann).
@@ -44,16 +39,16 @@ class Algorithm():
         values = self.getValues(pos)
         return boltzmann(values, self.TEMP)
 
-    def getActionRanking(self, pos):
+    def getActionRanking(self, pos=None):
         """
         Returns a list containing the ranking of each action (used in rank voting).
         """
         probabilities = self.getBoltzmannProbabilities(pos)
         seq = sorted(probabilities)
-        ranks = [seq.index(p) for p in probabilities]
+        ranks = np.array([seq.index(p) for p in probabilities])
         return ranks
 
-    def getMostProbableAction(self, pos):
+    def getMostProbableAction(self, pos=None):
         """
         Returns the index of the most probable action (used in majority voting)
         """
@@ -70,7 +65,7 @@ class QLearning(Algorithm):
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
 
     def getValues(self, pos):
-        x, y = pos
+        x, y = pos if pos is not None else self.pos
         return self.qValues[x, y]
 
     def update(self, reward, newPos, action):
@@ -99,7 +94,7 @@ class SARSA(Algorithm):
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
 
     def getValues(self, pos):
-        x, y = pos
+        x, y = pos if pos is not None else self.pos
         return self.qValues[x, y]
 
     def update(self, reward, newPos, action):
@@ -133,7 +128,7 @@ class ACLA(Algorithm):
         self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
     
     def getValues(self, pos):
-        x, y = pos
+        x, y = pos if pos is not None else self.pos
         return self.pValues[x, y]
     
     def update(self, reward, newPos, action):
@@ -189,7 +184,7 @@ class QVLearning(Algorithm):
         self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
 
     def getValues(self, pos):
-        x, y = pos
+        x, y = pos if pos is not None else self.pos
         return self.qValues[x, y]
 
     def update(self, reward, newPos, action):
@@ -218,7 +213,7 @@ class ActorCritic(Algorithm):
         self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
 
     def getValues(self, pos):
-        x, y = pos
+        x, y = pos if pos is not None else self.pos
         return self.pValues[x, y]
 
     def update(self, reward, newPos, action):
