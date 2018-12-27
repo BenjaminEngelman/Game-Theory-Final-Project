@@ -155,8 +155,9 @@ class QVLearning(Algorithm):
     def update(self, reward, newPos, action):
             oldX, oldY = self.pos
             newX, newY = newPos
-            vValueOfNextPos = self.vValues[newX, newY]
-            self.qValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * vValueOfNextPos - self.qValues[oldX, oldY, action]) 
+            
+            self.vValues[oldX, oldY] += self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
+            self.qValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * self.vValues[newX, newY] - self.qValues[oldX, oldY, action]) 
             
             self.pos = newPos
 
@@ -179,8 +180,8 @@ class ActorCritic(Algorithm):
         oldX, oldY = self.pos
         newX, newY = newPos
 
-        self.vValues[oldX, oldY] +=  self.BETA * (reward + self.GAMMA * vValues[newX, newY] - self.vValues[oldX, oldY])
-        self.pValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * vValues[newX, newY] - self.vValues[oldX, oldY]) 
+        self.vValues[oldX, oldY] +=  self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
+        self.pValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY]) 
         
         
         self.pos = newPos
