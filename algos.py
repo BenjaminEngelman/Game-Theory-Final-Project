@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def boltzmann(values, temp):
     boltzmannValues = np.exp(values / temp)
     boltzmannProbabilities = boltzmannValues / boltzmannValues.sum()
@@ -11,6 +12,7 @@ class MazeProperties:
     WIDTH = 5
     STARTPOS = (2, 3)
 
+
 class Algorithm():
 
     ##############################################
@@ -18,29 +20,20 @@ class Algorithm():
     #   THESE TWO METHODS AND HAVE A TEMP FIELD  #
     ##############################################
 
-    # TEMP = ... 
+    # TEMP = ...
 
     def update(self, reward, newPos, action):
         """
         Updates the internal state of the algorithm.
         """
         return NotImplementedError
-    
+
     def getValues(self):
         """
         Returns the value of each action, which is different for each algorithm,
         and represents how good each action is.
         """
         return NotImplementedError
-
-
-
-
-
-
-
-
-
 
     def getBoltzmannProbabilities(self, pos):
         """
@@ -50,7 +43,7 @@ class Algorithm():
         """
         values = self.getValues(pos)
         return boltzmann(values, self.TEMP)
-    
+
     def getActionRanking(self, pos):
         """
         Returns a list containing the ranking of each action (used in rank voting).
@@ -59,19 +52,12 @@ class Algorithm():
         seq = sorted(probabilities)
         ranks = [seq.index(p) for p in probabilities]
         return ranks
-        
 
     def getMostProbableAction(self, pos):
         """
         Returns the index of the most probable action (used in majority voting)
         """
         return np.argmax(self.getBoltzmannProbabilities(pos))
-
-
-
-
-
-
 
 
 class QLearning(Algorithm):
@@ -82,29 +68,25 @@ class QLearning(Algorithm):
     def __init__(self, maze):
         self.pos = maze.start
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
-    
+
     def getValues(self, pos):
         x, y = pos
         return self.qValues[x, y]
-    
+
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
         bestQValueInNextPos = np.max(self.qValues[newX, newY])
-        self.qValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - self.qValues[oldX, oldY, action]) 
+        self.qValues[oldX, oldY, action] += self.ALPHA * \
+            (reward + self.GAMMA * bestQValueInNextPos -
+             self.qValues[oldX, oldY, action])
         self.pos = newPos
 
         # Pseudo-code for neural network version
         # bestQValueInNextPos = np.max(self.nnQValues(newX, newY))
         # targetQValues = self.nnQValues(oldX, oldY)
-        # targetQValues[action] = self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - targetQValues[action]) 
+        # targetQValues[action] = self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - targetQValues[action])
         # nn.train(oldX, oldY, targetQValues)
-        
-
-
-
-
-
 
 
 class SARSA(Algorithm):
@@ -115,22 +97,24 @@ class SARSA(Algorithm):
     def __init__(self, maze):
         self.pos = maze.start
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
-    
+
     def getValues(self, pos):
         x, y = pos
         return self.qValues[x, y]
-    
+
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
-        
+
         # To avoid recusion, we compute the next action using only the SARSA algorithm and
         # not the whole ensemble
         nextAction = self.getMostProbableAction(newPos)
-        
+
         qValueOfNextAction = self.qValues[newX, newY, nextAction]
-        self.qValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * qValueOfNextAction - self.qValues[oldX, oldY, action]) 
-        
+        self.qValues[oldX, oldY, action] += self.ALPHA * \
+            (reward + self.GAMMA * qValueOfNextAction -
+             self.qValues[oldX, oldY, action])
+
         self.pos = newPos
 
 
@@ -203,23 +187,28 @@ class QVLearning(Algorithm):
         self.pos = maze.start
         self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
         self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
-    
+
     def getValues(self, pos):
         x, y = pos
         return self.qValues[x, y]
-    
+
     def update(self, reward, newPos, action):
-            oldX, oldY = self.pos
-            newX, newY = newPos
-            
-            self.vValues[oldX, oldY] += self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
-            self.qValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * self.vValues[newX, newY] - self.qValues[oldX, oldY, action]) 
-            
-            self.pos = newPos
+        oldX, oldY = self.pos
+        newX, newY = newPos
+
+        self.vValues[oldX, oldY] += self.BETA * \
+            (reward + self.GAMMA *
+             self.vValues[newX, newY] - self.vValues[oldX, oldY])
+        self.qValues[oldX, oldY, action] += self.ALPHA * \
+            (reward + self.GAMMA *
+             self.vValues[newX, newY] - self.qValues[oldX, oldY, action])
+
+        self.pos = newPos
+
 
 class ActorCritic(Algorithm):
     ALPHA = 0.1
-    BETA = 0.2 
+    BETA = 0.2
     GAMMA = 0.95
     TEMP = 1
 
@@ -227,22 +216,23 @@ class ActorCritic(Algorithm):
         self.pos = maze.start
         self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
         self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
-    
+
     def getValues(self, pos):
         x, y = pos
         return self.pValues[x, y]
-    
+
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
 
-        self.vValues[oldX, oldY] +=  self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
-        self.pValues[oldX, oldY, action] += self.ALPHA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY]) 
-        
-        
+        self.vValues[oldX, oldY] += self.BETA * \
+            (reward + self.GAMMA *
+             self.vValues[newX, newY] - self.vValues[oldX, oldY])
+        self.pValues[oldX, oldY, action] += self.ALPHA * \
+            (reward + self.GAMMA *
+             self.vValues[newX, newY] - self.vValues[oldX, oldY])
+
         self.pos = newPos
-   
-    
 
 
 
@@ -260,22 +250,6 @@ class ActorCritic(Algorithm):
 
 
 
-def isConnected(maze, start, end):
-    toExplore = set([start])
-    explored = set()
-    while toExplore:
-        node = toExplore.pop()
-
-        if node == end:
-            return True
-
-        explored.add(node)
-        for neighbor in neighbors(node):
-            if neighbor not in explored:
-                toExplore.add(neighbor)
-    
-    return False
-        
 
 
 
