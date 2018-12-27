@@ -1,5 +1,8 @@
 import numpy as np
 
+WIDTH = 9
+HEIGHT = 6
+
 ACTIONS = {
     0: (0, 1),
     1: (0, -1),
@@ -12,16 +15,13 @@ REWARD_GOAL = 100
 REWARD_MOVE = -1
 
 
-class SimpleMaze:
+class Maze:
 
-    def __init__(self):
-        self.WIDTH = 9
-        self.HEIGHT = 6
+    def __init__(self, start, goal, obstacles):
 
-        self.start = (0, 3)
-        self.goal = (8, 5)
-        self.obstacles = [(2, 2), (2, 3), (2, 4), (5, 1),
-                          (7, 3), (7, 4), (7, 5)]
+        self.start = start
+        self.goal = goal
+        self.obstacles = obstacles
 
         self.agent_position = self.start
         self.actions_counter = 0
@@ -38,7 +38,7 @@ class SimpleMaze:
         Checks if a position is outside of the maze bounds
         """
         x, y = position
-        return x >= self.WIDTH or x < 0 or y >= self.HEIGHT or y < 0
+        return x >= WIDTH or x < 0 or y >= HEIGHT or y < 0
 
     def apply_noise(self, action):
         """
@@ -81,21 +81,68 @@ class SimpleMaze:
         Checks if the agent has reached the goal
         """
         return self.agent_position == self.goal or self.actions_counter == 1000
-    
+
     def render(self):
-        for y in range(self.HEIGHT - 1, -1, -1):
-            for x in range(self.WIDTH):
-                if self.agent_position == (x, y): 
+        for y in range(HEIGHT - 1, -1, -1):
+            for x in range(WIDTH):
+                if self.agent_position == (x, y):
                     print('A', end=" ")
                 elif (x, y) in self.obstacles:
                     print('X', end=" ")
+                elif (x, y) == self.goal:
+                    print('G', end=" ")
                 else:
                     print('O', end=" ")
             print('\n')
 
 
+#########################
+#### Maze generators ####
+#########################
+
+def createSimpleMaze():
+    """
+    Creates the "default" maze.
+    Used for the Experiment 1
+    """
+    start = (0, 3)
+    goal = (8, 5)
+    obstacles = [(2, 2), (2, 3), (2, 4), (5, 1),
+                 (7, 3), (7, 4), (7, 5)]
+    return Maze(start, goal, obstacles)
+
+
+def createDynamicGoalMaze():
+    """
+    Creates a maze with the goal placed at a random position.
+    Used for the Experiment 2
+    """
+    start = (0, 3)
+    obstacles = [(2, 2), (2, 3), (2, 4), (5, 1),
+                 (7, 3), (7, 4), (7, 5)]
+
+    possibleGoalPos = [(x, y) for x in range(WIDTH) for y in range(
+        HEIGHT) if (x, y) != start and (x, y) not in obstacles]
+    goal = possibleGoalPos[np.random.randint(len(possibleGoalPos) - 1)]
+
+    return Maze(start, goal, obstacles)
+
+
+def createDynamicObstaclesMaze():
+    """
+    Creates a Maze with between 4 and 8 obstacles placed 
+    at random positions
+    """
+    # TODO
+    pass
+
+
+def createGeneralizedMaze():
+    # TODO
+    pass
+
+
 if __name__ == "__main__":
-    env = SimpleMaze()
-    reward, new_state = env.step(0)
+    env = createDynamicGoalMaze()
     # print(reward, new_state)
     env.render()

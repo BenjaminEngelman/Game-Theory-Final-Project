@@ -1,6 +1,6 @@
 from algos import *
 from ensembleMethods import *
-from mazes import SimpleMaze
+from mazes import *
 import time
 
 class AlgoParams():
@@ -55,7 +55,7 @@ if __name__ == "__main__":
         AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9)
     ]
 
-    maze = SimpleMaze()
+    maze = createSimpleMaze()
     agent = Agent(maze, majorityVote, parmasList, temp=1/1.6)
 
     start = time.time()
