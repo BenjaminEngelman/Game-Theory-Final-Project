@@ -28,17 +28,20 @@ class Agent():
     def learn(self, episodes):
         rewardsOverTime = []
 
-        for _ in range(episodes):
+        for i in range(episodes):
             episodeReward = 0
             while not self.maze.isDone():
                 action = self.ensembleMethod(self.algos, self.temp)
                 reward, new_state = self.maze.step(action)
-                episdodeReward += reward
-
+                episodeReward += reward
+                
                 for algo in self.algos:
                     algo.update(reward, new_state, action)
+                
+            print("Done %d" % (i + 1))
 
             rewardsOverTime.append(episodeReward)
+            maze.reset()
 
         return rewardsOverTime
 
@@ -54,4 +57,5 @@ if __name__ == "__main__":
 
     maze = SimpleMaze()
     agent = Agent(maze, majorityVote, parmasList, temp=1/1.6)
-    rewardsOverTime = agent.learn(50000)
+    rewardsOverTime = agent.learn(100)
+    print(rewardsOverTime[-10:])

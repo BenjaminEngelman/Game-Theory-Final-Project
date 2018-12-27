@@ -29,6 +29,10 @@ class SimpleMaze:
     def getActions(self):
         return (list(ACTIONS.keys()))
 
+    def reset(self):
+        self.agent_position = self.start
+        self.actions_counter = 0
+
     def isOutOfBounds(self, position):
         """
         Checks if a position is outside of the maze bounds
@@ -81,5 +85,5 @@ class SimpleMaze:
 
 if __name__ == "__main__":
     env = SimpleMaze()
-    reward, new_state = env.step("W")
+    reward, new_state = env.step(0)
     print(reward, new_state)
