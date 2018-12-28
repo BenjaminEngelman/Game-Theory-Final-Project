@@ -196,7 +196,7 @@ def createGeneralizedMaze():
 
     while True:
         # sample returns a k-element sample from the population (no replacement)
-        positions = random.sample(availablePos, numObstacles)
+        positions = random.sample(availablePos, numObstacles + 1)
         goal, obstacles = positions[0], positions[1:]
         maze = Maze(start, goal, obstacles)
         if maze.hasSolution():
