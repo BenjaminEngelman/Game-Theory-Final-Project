@@ -56,6 +56,7 @@ class Agent():
 
 
 class AgentWithSingleAlgo(Agent):
+
     def __init__(self, maze, algo, params):
         self.maze = maze
         self.algo = algo(maze, params)
@@ -92,10 +93,10 @@ class AgentWithEnsemble(Agent):
 if __name__ == "__main__":
 
     algos = [
-        # ("Q-Learning", QLearning, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
-        # ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
-        # ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
-        # ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
+        ("Q-Learning", QLearning, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+        ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+        ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
+        ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
         ("ACLA", ACLA, AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9))
     ]
 
@@ -104,7 +105,7 @@ if __name__ == "__main__":
         maze = createSimpleMaze()
         agent = AgentWithSingleAlgo(maze, algo, param)
 
-        print("Testing % s..." % name)
+        print("Testing %s..." % name)
 
         start = time.time()
 
