@@ -101,23 +101,31 @@ if __name__ == "__main__":
     ]
 
 
-    for name, algo, param in algos:
-        maze = createSimpleMaze()
-        agent = AgentWithSingleAlgo(maze, algo, param)
+    # for name, algo, param in algos:
+    #     maze = createSimpleMaze()
+    #     agent = AgentWithSingleAlgo(maze, algo, param)
 
-        print("Testing %s..." % name)
+    #     print("Testing %s..." % name)
 
-        start = time.time()
+    #     start = time.time()
 
-        # reward intake = reward moyen par mouvement
-        # Il mesure deux choses
-        # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
-        # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
-        allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
-        print("Learning process took %d seconds" % (time.time() - start))
-        print("Final: %s, Cumulative: %s" % (final, cumulative))
+    #     # reward intake = reward moyen par mouvement
+    #     # Il mesure deux choses
+    #     # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
+    #     # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
+    #     allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
+    #     print("Learning process took %d seconds" % (time.time() - start))
+    #     print("Final: %s, Cumulative: %s" % (final, cumulative))
 
-        saveToFile("results/data_%s.json" % name, [final, cumulative])
-        saveToFile("results/allRewardsIntakes_%s.json" % name, allRewardIntakes)
-        saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
-        print()
+    #     saveToFile("results/data_%s.json" % name, [final, cumulative])
+    #     saveToFile("results/allRewardsIntakes_%s.json" % name, allRewardIntakes)
+    #     saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
+    #     print()
+
+    name = "Majority"
+    maze = createSimpleMaze()
+    agent = AgentWithEnsemble(maze, majorityVote, [param[2] for param in algos], 1/1.6)
+    allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
+    saveToFile("results/data_%s.json" % name, [final, cumulative])
+    saveToFile("results/allRewardsIntakes_%s.json" % name, allRewardIntakes)
+    saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
