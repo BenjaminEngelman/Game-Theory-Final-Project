@@ -24,8 +24,8 @@ class Agent():
     def learn(self, episodes):
         last2500RewardIntakes = np.zeros(2500)
         rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
-        allRewardIntakes = np.zeros(50000)
-        numberOfSteps = np.zeros(50000)
+        #allRewardIntakes = np.zeros(50000)
+        #numberOfSteps = np.zeros(50000)
 
         for episodeNum in range(episodes):
             episodeReward = 0
@@ -36,12 +36,11 @@ class Agent():
                 # maze.render()
                 self.update(reward, new_state, action)
 
-            allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
-            numberOfSteps[episodeNum] = maze.actions_counter
+            #allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
+            #numberOfSteps[episodeNum] = maze.actions_counter
 
             if episodeNum % 2500 == 2499:
-                print("Done %d " % (episodeNum + 1))
-                
+                #print("Done %d " % (episodeNum + 1))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / maze.actions_counter)
 
             if episodeNum + 2500 >= episodes:
@@ -49,7 +48,8 @@ class Agent():
 
             maze.reset()
 
-        return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
+        return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
+        #return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
 
 
 class AgentWithSingleAlgo(Agent):
@@ -86,17 +86,29 @@ class AgentWithEnsemble(Agent):
     def chooseAction(self):
         return self.ensembleMethod(self.algos, self.temp)
 
+algos = [
+    ("Q-Learning", QLearning, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
+    ("ACLA", ACLA, AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9))
+]
+algoParamsList = [param[2] for param in algos]
+
+ensembles = [
+    ("Majority", majorityVote, algoParamsList, 1 / 1.6),
+    ("Rank", rankVote, algoParamsList, 1 / 0.6),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsList, 1 / 0.2),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 1)
+]
+
+
+
+
 
 if __name__ == "__main__":
 
-    algos = [
-        ("Q-Learning", QLearning, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
-        ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
-        ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
-        ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
-        ("ACLA", ACLA, AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9))
-    ]
-
+    
 
     # for name, algo, param in algos:
     #     maze = createSimpleMaze()
@@ -119,10 +131,11 @@ if __name__ == "__main__":
     #     saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
     #     print()
 
-    name = "Majority"
-    maze = createSimpleMaze()
-    agent = AgentWithEnsemble(maze, majorityVote, [param[2] for param in algos], 1/1.6)
-    allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
-    saveToFile("results/data_%s.json" % name, [final, cumulative])
-    saveToFile("results/allRewardsIntakes_%s.json" % name, allRewardIntakes)
-    saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
+    #name = "Majority"
+    #maze = createSimpleMaze()
+    #agent = AgentWithEnsemble(maze, majorityVote, [param[2] for param in algos], 1/1.6)
+    #allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
+    #saveToFile("results/data_%s.json" % name, [final, cumulative])
+    #saveToFile("results/allRewardsIntakes_%s.json" % name, allRewardIntakes)
+    #saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
+    pass
