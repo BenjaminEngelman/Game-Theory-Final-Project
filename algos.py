@@ -147,14 +147,14 @@ class ACLA(Algorithm):
 
         # Update the P values
         delta = self.GAMMA * self.vValues[newX, newY] + reward - self.vValues[oldX, oldY]  
-        if delta > 0:
+        if delta >= 0:
             self.pValues[oldX, oldY, action] += self.ALPHA * (1 - self.pValues[oldX, oldY, action])
             for a in allActionsExcept(action):
-                self.pValues[oldX, oldY, action] += self.ALPHA * (0 - self.pValues[oldX, oldY, action])
+                self.pValues[oldX, oldY, a] += self.ALPHA * (0 - self.pValues[oldX, oldY, a])
 
         else:
-            # Remove ALPHA * pValue for all actions
-            self.pValues[oldX, oldY] -= self.ALPHA * self.pValues[oldX, oldY]
+
+            self.pValues[oldX, oldY, action] -= self.ALPHA * self.pValues[oldX, oldY, action]
             
             # Add ALPHA * fraction for all actions except the action that was used
             pValuesSum = self.pValues[oldX, oldY].sum()
@@ -164,10 +164,10 @@ class ACLA(Algorithm):
                 if denom > 0:
                     # Normal case:
                     num = self.pValues[oldX, oldY, a]
-                    self.pValues[oldX, oldY, action] += self.ALPHA * (num / denom)
+                    self.pValues[oldX, oldY, a] += self.ALPHA * ((num / denom) - self.pValues[oldX, oldY, a]) 
                 else:
                     # Special Rule 1: if denom is <= 0, put 1/3
-                    self.pValues[oldX, oldY, action] = 1 / (4 - 1)
+                    self.pValues[oldX, oldY, a] = 1 / (4 - 1)
                     
         # Special rule 2: p values must be between 0 and 1
         self.pValues[oldX, oldY, :] =  np.clip(self.pValues[oldX, oldY], 0, 1)
