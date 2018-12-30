@@ -46,7 +46,7 @@ class Agent():
             if episodeNum + 2500 >= episodes:
                 last2500RewardIntakes[episodeNum - 47500] = (episodeReward / maze.actions_counter)
 
-            maze.reset()
+            self.maze.reset()
 
         return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
         #return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
