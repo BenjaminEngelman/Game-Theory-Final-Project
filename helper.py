@@ -12,9 +12,13 @@ def boltzmann(values, temp):
 #  SAVE RESULTS  #
 ##################
 import json
+import numpy
 
 def saveToFile(filename, data):
     with open(filename, 'w') as f:
+        if type(data) == numpy.ndarray:
+            data = data.tolist()
+
         json.dump(data, f)
 
 def readFromFile(filename):
