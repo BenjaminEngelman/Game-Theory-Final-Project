@@ -91,19 +91,20 @@ class AgentWithEnsemble(Agent):
 
 if __name__ == "__main__":
 
-    paramsDict = {
-        "Q-Learning": AlgoParams(alpha=0.2, gamma=0.9, temp=1),
-        "SARSA": AlgoParams(alpha=0.2, gamma=0.9, temp=1),
-        "Actor-Critic": AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1),
-        "QV-Learning": AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1),
-        "ACLA": AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9)
-    }
+    algos = [
+        # ("Q-Learning", QLearning, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+        # ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+        # ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
+        # ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
+        ("ACLA", ACLA, AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9))
+    ]
 
-    for algo in paramsDict.keys():
+
+    for name, algo, param in algos:
         maze = createSimpleMaze()
-        agent = AgentWithSingleAlgo(maze, QLearning, paramsDict[algo])
+        agent = AgentWithSingleAlgo(maze, algo, param)
 
-        print("Testing % s..." % algo)
+        print("Testing % s..." % name)
 
         start = time.time()
 
@@ -115,7 +116,7 @@ if __name__ == "__main__":
         print("Learning process took %d seconds" % (time.time() - start))
         print("Final: %s, Cumulative: %s" % (final, cumulative))
 
-        saveToFile("results/data_%s.json" % algo, [final, cumulative])
-        saveToFile("results/allRewardsIntakes_%s.json" % algo, allRewardIntakes)
-        saveToFile("results/numberOfSteps_%s.json" % algo, numberOfSteps)
+        saveToFile("results/data_%s.json" % name, [final, cumulative])
+        saveToFile("results/allRewardsIntakes_%s.json" % name, allRewardIntakes)
+        saveToFile("results/numberOfSteps_%s.json" % name, numberOfSteps)
         print()
