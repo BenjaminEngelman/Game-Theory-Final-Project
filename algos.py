@@ -1,11 +1,8 @@
 import numpy as np
 from helper import boltzmann
+from mazes import WIDTH, HEIGHT
 
 
-class MazeProperties:
-    HEIGHT = 10
-    WIDTH = 5
-    STARTPOS = (2, 3)
 
 
 class Algorithm():
@@ -63,7 +60,7 @@ class QLearning(Algorithm):
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos

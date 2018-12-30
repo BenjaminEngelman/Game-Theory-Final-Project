@@ -1,6 +1,7 @@
 from algos import *
 from ensembleMethods import *
 from mazes import *
+from helper import *
 import time
 
 class AlgoParams():
@@ -63,6 +64,7 @@ if __name__ == "__main__":
     print("Learning process took %d seconds" % (time.time() - start))
 
     print(rewardsOverTime[-10:])
+    saveToFile("data.json", rewardsOverTime)
 
     
     # reward intake = reward moyen par mouvement
