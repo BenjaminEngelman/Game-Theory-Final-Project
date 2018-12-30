@@ -27,6 +27,12 @@ class Algorithm():
         """
         return NotImplementedError
 
+    def getActionBoltzmannChoice(self):
+        """
+        Choose an action using the Boltzmann probabilities
+        """
+        return np.random.choice([0,1,2,3], p=self.getBoltzmannProbabilities())
+
     def getBoltzmannProbabilities(self, pos=None):
         """
         Returns a list containing each action's probability 
