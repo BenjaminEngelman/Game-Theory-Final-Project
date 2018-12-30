@@ -28,7 +28,7 @@ class Maze:
         self.actions_counter = 0
 
     def getActions(self):
-        return (list(ACTIONS.keys()))
+        return [0, 1, 2, 3]
 
     def reset(self):
         self.agent_position = self.start

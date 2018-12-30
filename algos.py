@@ -185,7 +185,6 @@ class QVLearning(Algorithm):
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.pos = maze.start
         self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
         self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
 

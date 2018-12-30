@@ -36,20 +36,17 @@ class Agent():
                 # maze.render()
                 self.update(reward, new_state, action)
 
-            allRewardIntakes[episodeNum] = (
-                episodeReward / maze.actions_counter)
+            allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
             numberOfSteps[episodeNum] = maze.actions_counter
 
             if episodeNum % 2500 == 2499:
                 print("Done %d in %d steps" %
                       (episodeNum + 1, self.maze.actions_counter))
                 
-                rewardIntakesEvery2500Episodes[episodeNum //
-                                               2500] = (episodeReward / maze.actions_counter)
+                rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / maze.actions_counter)
 
             if episodeNum + 2500 >= episodes:
-                last2500RewardIntakes[episodeNum -
-                                      47500] = (episodeReward / maze.actions_counter)
+                last2500RewardIntakes[episodeNum - 47500] = (episodeReward / maze.actions_counter)
 
             maze.reset()
 
