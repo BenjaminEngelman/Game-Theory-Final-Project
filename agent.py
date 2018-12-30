@@ -27,9 +27,11 @@ class Agent():
         ]
 
     def learn(self, episodes):
-        rewardsOverTime = []
+        last2500RewardIntakes = np.zeros(2500)
+        rewardIntakesEvery2500Episodes = np.zeros(episodes / 2500)
+        
 
-        for i in range(episodes):
+        for episodeNum in range(episodes):
             episodeReward = 0
             while not self.maze.isDone():
                 action = self.ensembleMethod(self.algos, self.temp)
@@ -40,11 +42,17 @@ class Agent():
                 for algo in self.algos:
                     algo.update(reward, new_state, action)
                 
-            print("Done %d in %d steps" % (i + 1, self.maze.actions_counter))
-            rewardsOverTime.append(episodeReward)
+            print("Done %d in %d steps" % (episodeNum + 1, self.maze.actions_counter))
+            
+            if episodeNum % 2500 == 2499:
+                rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / maze.actions_counter)
+
+            if episodeNum + 2500 >= episodes:
+                last2500RewardIntakes[episodeNum - 47500].append(episodeReward / maze.actions_counter)
+            
             maze.reset()
 
-        return rewardsOverTime
+        return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
 
 
 if __name__ == "__main__":
@@ -60,14 +68,16 @@ if __name__ == "__main__":
     agent = Agent(maze, majorityVote, parmasList, temp=1/1.6)
 
     start = time.time()
-    rewardsOverTime = agent.learn(5000)
-    print("Learning process took %d seconds" % (time.time() - start))
 
-    print(rewardsOverTime[-10:])
-    saveToFile("data.json", rewardsOverTime)
-
-    
     # reward intake = reward moyen par mouvement
     # Il mesure deux choses
     # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
     # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
+    final, cumulative = agent.learn(50000)
+    print("Learning process took %d seconds" % (time.time() - start))
+
+    print("Final: %s, Cumulative: %s" % (final, cumulative))
+    saveToFile("data.json", [final, cumulative])
+
+    
+    
