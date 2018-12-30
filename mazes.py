@@ -47,7 +47,7 @@ class Maze:
         with a probability of 20%
         """
         if np.random.random() < 0.2:
-            return np.random.choice([new_action for new_action in self.getActions() if new_action != action])
+            return np.random.choice([new_action for new_action in self.getActions()])
 
         return action
 
@@ -204,6 +204,6 @@ def createGeneralizedMaze():
 
 
 if __name__ == "__main__":
-    env = createGeneralizedMaze()
+    env = createSimpleMaze()
     # print(reward, new_state)
     env.render()
