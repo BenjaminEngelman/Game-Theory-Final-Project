@@ -90,7 +90,7 @@ class SARSA(Algorithm):
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
@@ -124,8 +124,8 @@ class ACLA(Algorithm):
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
-        self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
+        self.pValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
     
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
@@ -180,8 +180,8 @@ class QVLearning(Algorithm):
 
         self.pos = maze.start
         self.pos = maze.start
-        self.qValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
-        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
+        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
+        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
@@ -210,8 +210,8 @@ class ActorCritic(Algorithm):
         self.TEMP = params.TEMP
         
         self.pos = maze.start
-        self.vValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT))
-        self.pValues = np.zeros(shape=(maze.WIDTH, maze.HEIGHT, 4))
+        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
+        self.pValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
