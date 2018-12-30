@@ -28,7 +28,7 @@ class Agent():
 
     def learn(self, episodes):
         last2500RewardIntakes = np.zeros(2500)
-        rewardIntakesEvery2500Episodes = np.zeros(episodes / 2500)
+        rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
         
 
         for episodeNum in range(episodes):
@@ -42,9 +42,8 @@ class Agent():
                 for algo in self.algos:
                     algo.update(reward, new_state, action)
                 
-            print("Done %d in %d steps" % (episodeNum + 1, self.maze.actions_counter))
-            
             if episodeNum % 2500 == 2499:
+                print("Done %d in %d steps" % (episodeNum + 1, self.maze.actions_counter))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / maze.actions_counter)
 
             if episodeNum + 2500 >= episodes:
