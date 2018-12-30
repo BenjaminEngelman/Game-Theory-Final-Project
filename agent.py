@@ -63,3 +63,9 @@ if __name__ == "__main__":
     print("Learning process took %d seconds" % (time.time() - start))
 
     print(rewardsOverTime[-10:])
+
+    # Premier truc qu'il mesure c'est
+    # reward = reward moyen par mouvement
+    
+    # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
+    # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
