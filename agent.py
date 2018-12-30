@@ -29,7 +29,8 @@ class Agent():
     def learn(self, episodes):
         last2500RewardIntakes = np.zeros(2500)
         rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
-        
+        allRewardIntakes = np.zeros(50000)
+        numberOfSteps  = np.zeros(50000)
 
         for episodeNum in range(episodes):
             episodeReward = 0
@@ -42,17 +43,20 @@ class Agent():
                 for algo in self.algos:
                     algo.update(reward, new_state, action)
                 
+            allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
+            numberOfSteps[episodeNum] = maze.actions_counter
+
             if episodeNum % 2500 == 2499:
                 print("Done %d in %d steps" % (episodeNum + 1, self.maze.actions_counter))
                 print("Reward intake: %s" % (episodeReward / maze.actions_counter))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / maze.actions_counter)
 
             if episodeNum + 2500 >= episodes:
-                last2500RewardIntakes[episodeNum - 47500].append(episodeReward / maze.actions_counter)
+                last2500RewardIntakes[episodeNum - 47500] = (episodeReward / maze.actions_counter)
             
             maze.reset()
 
-        return last2500RewardIntakes, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
+        return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
 
 
 if __name__ == "__main__":
@@ -73,12 +77,13 @@ if __name__ == "__main__":
     # Il mesure deux choses
     # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
     # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
-    last2500RewardIntakes, final, cumulative = agent.learn(50000)
+    allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
     print("Learning process took %d seconds" % (time.time() - start))
 
     print("Final: %s, Cumulative: %s" % (final, cumulative))
     saveToFile("data.json", [final, cumulative])
-    saveToFile("last2500.json", last2500RewardIntakes)
+    saveToFile("allRewardsIntakes.json", allRewardIntakes)
+    saveToFile("numberOfSteps.json", numberOfSteps)
 
     
     
