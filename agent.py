@@ -41,8 +41,7 @@ class Agent():
             numberOfSteps[episodeNum] = maze.actions_counter
 
             if episodeNum % 2500 == 2499:
-                print("Done %d in %d steps" %
-                      (episodeNum + 1, self.maze.actions_counter))
+                print("Done %d " % (episodeNum + 1))
                 
                 rewardIntakesEvery2500Episodes[episodeNum //
                                                2500] = (episodeReward / maze.actions_counter)
@@ -65,7 +64,7 @@ class AgentWithSingleAlgo(Agent):
         self.algo.update(reward, new_state, action)
 
     def chooseAction(self):
-        return self.algo.getMostProbableAction()
+        return self.algo.getActionBoltzmannChoice()
 
 
 class AgentWithEnsemble(Agent):
@@ -91,6 +90,7 @@ class AgentWithEnsemble(Agent):
 
 
 if __name__ == "__main__":
+
     paramsDict = {
         "Q-Learning": AlgoParams(alpha=0.2, gamma=0.9, temp=1),
         "SARSA": AlgoParams(alpha=0.2, gamma=0.9, temp=1),
@@ -99,20 +99,23 @@ if __name__ == "__main__":
         "ACLA": AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9)
     }
 
-    maze = createSimpleMaze()
-    agent = AgentWithSingleAlgo(
-        maze, QLearning, paramsDict["Q-Learning"])
+    for algo in paramsDict.keys():
+        maze = createSimpleMaze()
+        agent = AgentWithSingleAlgo(maze, QLearning, paramsDict[algo])
 
-    start = time.time()
+        print("Testing % s..." % algo)
 
-    # reward intake = reward moyen par mouvement
-    # Il mesure deux choses
-    # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
-    # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
-    allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
-    print("Learning process took %d seconds" % (time.time() - start))
+        start = time.time()
 
-    print("Final: %s, Cumulative: %s" % (final, cumulative))
-    saveToFile("data_QLearning.json", [final, cumulative])
-    saveToFile("allRewardsIntakes_QLearning.json", allRewardIntakes)
-    saveToFile("numberOfSteps_QLearning.json", numberOfSteps)
+        # reward intake = reward moyen par mouvement
+        # Il mesure deux choses
+        # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
+        # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
+        allRewardIntakes, numberOfSteps, final, cumulative = agent.learn(50000)
+        print("Learning process took %d seconds" % (time.time() - start))
+        print("Final: %s, Cumulative: %s" % (final, cumulative))
+
+        saveToFile("results/data_%s.json" % algo, [final, cumulative])
+        saveToFile("results/allRewardsIntakes_%s.json" % algo, allRewardIntakes)
+        saveToFile("results/numberOfSteps_%s.json" % algo, numberOfSteps)
+        print()
