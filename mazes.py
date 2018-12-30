@@ -13,7 +13,7 @@ ACTIONS = {
 
 PENALTY = -2
 REWARD_GOAL = 100
-REWARD_MOVE = -1
+REWARD_MOVE = -0.1
 
 
 class Maze:
