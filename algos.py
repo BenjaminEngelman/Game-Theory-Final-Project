@@ -46,7 +46,7 @@ class Algorithm():
         """
         Returns a list containing the ranking of each action (used in rank voting).
         """
-        probabilities = self.getBoltzmannProbabilities(pos)
+        probabilities = self.getBoltzmannProbabilities(pos).tolist()
         seq = sorted(probabilities)
         ranks = np.array([seq.index(p) for p in probabilities])
         return ranks
