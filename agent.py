@@ -105,20 +105,20 @@ ensemblesExp1 = [
 ]
 
 ####################################### EXPERIMENT 3 ###########################################
-algosExp2 = [
+algosExp3 = [
     ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
     ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
     ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1)),
     ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4)),
     ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.002, gamma=0.98, temp=1/6))
 ]
-algoParamsListExp2 = [param[2] for param in algosExp2]
+algoParamsListExp3 = [param[2] for param in algosExp3]
 
 ensemblesExp2 = [
-    ("Majority", majorityVote, algoParamsListExp2, 1 / 2.6),
-    ("Rank", rankVote, algoParamsListExp2, 1 / 0.8),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp2, 1 / 1),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp2, 1/ 0.2)
+    ("Majority", majorityVote, algoParamsListExp3, 1 / 2.6),
+    ("Rank", rankVote, algoParamsListExp3, 1 / 0.8),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2)
 ]
 ################################################################################################
 
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     maze = createDynamicObstaclesMaze()
     start = time.time()
-    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algosExp2[0][2])
+    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algosExp3[0][2])
     results = agent.learn(50000)
     print("Took %d s" % (time.time() - start))
     print(results)
