@@ -152,11 +152,10 @@ class QLearningNormal(QLearning):
         self.qValues[x, y] = val
 
 
-
 class QLearningNeuronal(QLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nn = KerasNeuralNetwork()
+        self.nn = ScikitNeuralNetwork()
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         
 
