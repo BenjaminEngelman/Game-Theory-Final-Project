@@ -127,7 +127,6 @@ class QLearning(Algorithm):
         return NotImplementedError
     
     
-
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
@@ -175,13 +174,18 @@ class SARSA(Algorithm):
         self.ALPHA = params.ALPHA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
-
+        
         self.pos = maze.start
-        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
-
+        
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
-        return self.qValues[x, y]
+        return self.getQValues(x, y)
+    
+    def getQValues(self, x, y):
+        return NotImplementedError
+
+    def updateQValues(self, x, y, val):
+        return NotImplementedError
 
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
@@ -191,12 +195,46 @@ class SARSA(Algorithm):
         # not the whole ensemble
         nextAction = self.getMostProbableAction(newPos)
 
-        qValueOfNextAction = self.qValues[newX, newY, nextAction]
-        self.qValues[oldX, oldY, action] += self.ALPHA * \
+        qValueOfNextAction = self.getQValues(newX, newY)[nextAction]
+        Qvalues = self.getQValue(oldX, oldY)
+        Qvalues[action] += self.ALPHA * \
             (reward + self.GAMMA * qValueOfNextAction -
-             self.qValues[oldX, oldY, action])
-
+             Qvalues[action])
+        self.updateQValues(oldX, oldY, QValues)
         self.pos = newPos
+
+class SARSANormal(SARSA):
+    def __init__(self, maze, params):
+        super().__init__(maze, params)
+        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
+
+    def getQValues(self, x, y):
+        return self.qValues[x, y]
+
+    def updateQValues(self, x, y, val):
+        self.qValues[x, y] = val
+
+
+class SARSANeuronal(SARSA):
+    def __init__(self, maze, params):
+        super().__init__(maze, params)
+        self.nn = ScikitNeuralNetwork()
+        self.obstacles = getNNEncodedObstacles(maze.obstacles)
+        
+
+    def getNNInput(self, x, y):
+        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
+        return nnInput.reshape(1, -1)
+        
+    def getQValues(self, x, y):
+        nnInput = self.getNNInput(x, y)
+        return self.nn.predict(nnInput)[0]
+    
+    def updateQValues(self, x, y, val):
+        nnInput = self.getNNInput(x, y)
+        self.nn.train(nnInput, val)
+    
+    
 
 
 def allActionsExcept(action):
