@@ -107,13 +107,24 @@ ensembles = [
 
 if __name__ == "__main__":
 
-    maze = createSimpleMaze()
-    for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
-        print(name)
-        start = time.time()
-        agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
-        agent.learn(50000)
-        print("Took %d s" % (time.time() - start))
+
+
+    maze = createDynamicObstaclesMaze()
+    start = time.time()
+    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algos[0][2])
+    results = agent.learn(500)
+    print("Took %d s" % (time.time() - start))
+    print(results)
+    saveComplexJson("nnQLearning.json", results)
+
+
+    # for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
+    #     print(name)
+    #     start = time.time()
+    #     #agent = AgentWithSingleAlgo(maze, ensembleMethod, algoParamsList, temp)
+    #     #agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
+    #     agent.learn(50000)
+    #     print("Took %d s" % (time.time() - start))
 
     # for name, algo, param in algos:
     #     maze = createSimpleMaze()

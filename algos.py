@@ -1,9 +1,19 @@
 import numpy as np
 from helper import boltzmann
 from mazes import WIDTH, HEIGHT
+from sklearn.neural_network import MLPRegressor
 
+       
+def getNNEncodedObstacles(obstacles):
+    nnObstacles = np.zeros(shape=(WIDTH, HEIGHT))
+    for (x, y) in obstacles:
+        nnObstacles[x, y] = 1
+    return nnObstacles.reshape(-1)
 
-
+def getNNEncodedPosition(x, y):
+    nnPosition = np.zeros(shape=(WIDTH, HEIGHT))
+    nnPosition[x, y] = 1
+    return nnPosition.reshape(-1)
 
 class Algorithm():
 
@@ -76,7 +86,7 @@ class QLearning(Algorithm):
     def getQValues(self, x, y):
         return NotImplementedError
 
-    def updateQValue(self, x, y, action, val):
+    def updateQValues(self, x, y, val):
         return NotImplementedError
     
     
@@ -85,9 +95,9 @@ class QLearning(Algorithm):
         oldX, oldY = self.pos
         newX, newY = newPos
         bestQValueInNextPos = np.max(self.getQValues(newX, newY))
-        oldQValue = self.getQValue(oldX, oldY, action)
-        newQValue = oldQValue + self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - oldQValue)
-        self.updateQValue(oldX, oldY, action, newQValue)
+        QValues = self.getQValues(oldX, oldY)
+        QValues[action] += self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - QValues[action])
+        self.updateQValues(oldX, oldY, QValues)
         self.pos = newPos
 
 class QLearningNormal(QLearning):
@@ -98,26 +108,24 @@ class QLearningNormal(QLearning):
     def getQValues(self, x, y):
         return self.qValues[x, y]
 
-    def updateQValue(self, x, y, action, val):
-        self.qValues[x, y, action] = val
+    def updateQValues(self, x, y, val):
+        self.qValues[x, y] = val
 
-    
-       
 
 
 class QLearningNeuronal(QLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        # TODO: initialize the neural network
-        pass
-
+        self.nn = MLPRegressor(hidden_layer_sizes=(60, ), activation='logistic')
+        self.obstacles = getNNEncodedObstacles(maze.obstacles)
+        
     def getQValues(self, x, y):
-        # TODO: use neural network to get the predicted Q values for a given state
-        pass
+        nnInput = self.obstacles + getNNEncodedPosition(x, y)
+        return self.nn.predict(nnInput)
     
-    def updateQValue(self, x, y, action, val):
-        # TODO: make code to improve the neural network
-        pass
+    def updateQValues(self, x, y, val):
+        nnInput = self.obstacles + getNNEncodedPosition(x, y)
+        self.nn.partial_fit(nnInput, val)
 
 
 class SARSA(Algorithm):
