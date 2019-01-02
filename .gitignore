@@ -1,5 +1,5 @@
 __pycache__/
-\.vscode/\.ropeproject/
+\.vscode/
 data.json
 results.bak/
 .ipynb_checkpoints/

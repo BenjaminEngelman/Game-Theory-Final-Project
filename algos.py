@@ -59,33 +59,63 @@ class Algorithm():
 
 
 class QLearning(Algorithm):
-
     def __init__(self, maze, params):
         self.ALPHA = params.ALPHA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
-        return self.qValues[x, y]
+        return self.getQValues(x, y)
+        
+    def getQValue(self, x, y, action):
+        return self.getQValues(pos=(x, y))[action]
+    
+    def setQValue(self, x, y, action, val):
+        return NotImplementedError
+    
+    def getQValues(self, x, y):
+        return NotImplementedError
 
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
-        bestQValueInNextPos = np.max(self.qValues[newX, newY])
-        self.qValues[oldX, oldY, action] += self.ALPHA * \
-            (reward + self.GAMMA * bestQValueInNextPos -
-             self.qValues[oldX, oldY, action])
+        bestQValueInNextPos = np.max(self.getQValues(newX, newY))
+        oldQValue = self.getQValue(oldX, oldY, action)
+        newQValue = oldQValue + self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - oldQValue)
+        self.updateQValue(oldX, oldY, action, newQValue)
         self.pos = newPos
 
-        # Pseudo-code for neural network version
-        # bestQValueInNextPos = np.max(self.nnQValues(newX, newY))
-        # targetQValues = self.nnQValues(oldX, oldY)
-        # targetQValues[action] = self.ALPHA * (reward + self.GAMMA * bestQValueInNextPos - targetQValues[action])
-        # nn.train(oldX, oldY, targetQValues)
+class QLearningNormal(QLearning):
+    def __init__(self, maze, params):
+        # TODO: check this
+        super.__init__(maze, params)
+        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
+
+    def updateQValue(self, x, y, action, val):
+        self.qValues[x, y, action] = val
+
+    def getQValues(self, x, y):
+        return self.qValues[x, y]
+       
+
+
+class QLearningNeuronal(QLearning):
+    def __init__(self, maze, params):
+        # TODO: check this
+        super.__init__(maze, params)
+        # TODO: initialize the neural network
+        pass
+
+    def updateQValue(self, x, y):
+        # TODO: use neural network to get the predicted Q values for a given state
+        pass
+    
+    def setQValue(self, x, y, action, val):
+        # TODO: make code to improve the neural network
+        pass
 
 
 class SARSA(Algorithm):
