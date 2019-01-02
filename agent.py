@@ -29,7 +29,6 @@ class Agent():
 
         for episodeNum in range(episodes):
             episodeReward = 0
-            print(episodeNum)
             while not self.maze.isDone():
                 action = self.chooseAction()
                 reward, new_state = self.maze.step(action)
@@ -40,11 +39,11 @@ class Agent():
             #allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
             #numberOfSteps[episodeNum] = maze.actions_counter
 
-            if False and episodeNum % 2500 == 2499:
+            if episodeNum % 2500 == 2499:
                 print("Done %d " % (episodeNum + 1))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
 
-            if False and episodeNum + 2500 >= episodes:
+            if episodeNum + 2500 >= episodes:
                 last2500RewardIntakes[episodeNum - 47500] = (episodeReward / self.maze.actions_counter)
 
             self.maze.reset()
@@ -87,36 +86,51 @@ class AgentWithEnsemble(Agent):
     def chooseAction(self):
         return self.ensembleMethod(self.algos, self.temp)
 
-algos = [
+####################################### EXPERIMENT 1 ###########################################
+
+algosExp1 = [
     ("Q-Learning", QLearningNormal, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
     ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
     ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
     ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
     ("ACLA", ACLA, AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9))
 ]
-algoParamsList = [param[2] for param in algos]
+algoParamsListExp1 = [param[2] for param in algosExp1]
 
-ensembles = [
-    ("Majority", majorityVote, algoParamsList, 1 / 1.6),
-    ("Rank", rankVote, algoParamsList, 1 / 0.6),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsList, 1 / 1),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 1/ 0.2)
+ensemblesExp1 = [
+    ("Majority", majorityVote, algoParamsListExp1, 1 / 1.6),
+    ("Rank", rankVote, algoParamsListExp1, 1 / 0.6),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp1, 1 / 1),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp1, 1/ 0.2)
 ]
 
+####################################### EXPERIMENT 3 ###########################################
+algosExp2 = [
+    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4)),
+    ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.002, gamma=0.98, temp=1/6))
+]
+algoParamsListExp2 = [param[2] for param in algosExp2]
 
-
+ensemblesExp2 = [
+    ("Majority", majorityVote, algoParamsListExp2, 1 / 2.6),
+    ("Rank", rankVote, algoParamsListExp2, 1 / 0.8),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp2, 1 / 1),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp2, 1/ 0.2)
+]
+################################################################################################
 
 if __name__ == "__main__":
 
-
-
     maze = createDynamicObstaclesMaze()
     start = time.time()
-    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algos[0][2])
-    results = agent.learn(500)
+    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algosExp2[0][2])
+    results = agent.learn(50000)
     print("Took %d s" % (time.time() - start))
     print(results)
-    saveComplexJson("nnQLearning.json", results)
+    saveToFile("nnQLearning.json", results)
 
 
     # for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
