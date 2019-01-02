@@ -99,9 +99,8 @@ ensembles = [
     ("Majority", majorityVote, algoParamsList, 1 / 1.6),
     ("Rank", rankVote, algoParamsList, 1 / 0.6),
     ("Boltzmann Addition", boltzmannAddVote, algoParamsList, 1 / 1),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 0.2)
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 1/ 0.2)
 ]
-
 
 
 
