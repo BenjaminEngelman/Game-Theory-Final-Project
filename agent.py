@@ -114,7 +114,7 @@ algosExp3 = [
 ]
 algoParamsListExp3 = [param[2] for param in algosExp3]
 
-ensemblesExp2 = [
+ensemblesExp3 = [
     ("Majority", majorityVote, algoParamsListExp3, 1 / 2.6),
     ("Rank", rankVote, algoParamsListExp3, 1 / 0.8),
     ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
