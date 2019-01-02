@@ -73,11 +73,13 @@ class QLearning(Algorithm):
     def getQValue(self, x, y, action):
         return self.getQValues(x, y)[action]
     
-    def setQValue(self, x, y, action, val):
-        return NotImplementedError
-    
     def getQValues(self, x, y):
         return NotImplementedError
+
+    def updateQValue(self, x, y, action, val):
+        return NotImplementedError
+    
+    
 
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
@@ -94,11 +96,13 @@ class QLearningNormal(QLearning):
         super().__init__(maze, params)
         self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
+    def getQValues(self, x, y):
+        return self.qValues[x, y]
+
     def updateQValue(self, x, y, action, val):
         self.qValues[x, y, action] = val
 
-    def getQValues(self, x, y):
-        return self.qValues[x, y]
+    
        
 
 
@@ -109,11 +113,11 @@ class QLearningNeuronal(QLearning):
         # TODO: initialize the neural network
         pass
 
-    def updateQValue(self, x, y):
+    def getQValues(self, x, y):
         # TODO: use neural network to get the predicted Q values for a given state
         pass
     
-    def setQValue(self, x, y, action, val):
+    def updateQValue(self, x, y, action, val):
         # TODO: make code to improve the neural network
         pass
 
