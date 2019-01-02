@@ -40,7 +40,7 @@ class Agent():
             #numberOfSteps[episodeNum] = maze.actions_counter
 
             if episodeNum % 2500 == 2499:
-                # print("Done %d " % (episodeNum + 1))
+                print("Done %d " % (episodeNum + 1))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
 
             if episodeNum + 2500 >= episodes:
@@ -72,7 +72,7 @@ class AgentWithEnsemble(Agent):
         self.temp = temp
         self.ensembleMethod = ensembleMethod
         self.algos = [
-            QLearning(maze, algoParamsList[0]),
+            QLearningNormal(maze, algoParamsList[0]),
             SARSA(maze, algoParamsList[1]),
             ActorCritic(maze, algoParamsList[2]),
             QVLearning(maze, algoParamsList[3]),
