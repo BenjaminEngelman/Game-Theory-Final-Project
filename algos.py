@@ -249,49 +249,105 @@ class ACLA(Algorithm):
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
-        self.pValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
+
     
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
         return self.pValues[x, y]
     
+    def getVValue(self, x, y): return NotImplementedError
+    def updateVValue(self, x, y, val): return NotImplementedError
+    def getPValues(self, x, y): return NotImplementedError
+    def updatePValues(self, x, y, values): return NotImplementedError
+    
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
+        
+        oldVValue = self.getVValue(oldX, oldY)
+        newVValue = self.getVValue(newX, newY)
 
         # Update the v values
-        self.vValues[oldX, oldY] += self.BETA * (reward + self.GAMMA * self.vValues[newX, newY] - self.vValues[oldX, oldY])
-        
+        oldVValue += self.BETA * (reward + self.GAMMA * newVValue - oldVValue)
+        self.updateVValue(oldX, oldY, oldVValue)
 
         # Update the P values
-        delta = self.GAMMA * self.vValues[newX, newY] + reward - self.vValues[oldX, oldY]  
+        delta = self.GAMMA * newVValue + reward - oldVValue 
+        oldPValues = self.getPValues(oldX, oldY)
         if delta >= 0:
-            self.pValues[oldX, oldY, action] += self.ALPHA * (1 - self.pValues[oldX, oldY, action])
+            oldPValues[action] += self.ALPHA * (1 - oldPValues[action])
             for a in allActionsExcept(action):
-                self.pValues[oldX, oldY, a] += self.ALPHA * (0 - self.pValues[oldX, oldY, a])
+                oldPValues[a] += self.ALPHA * (0 - oldPValues[a])
 
         else:
 
-            self.pValues[oldX, oldY, action] -= self.ALPHA * self.pValues[oldX, oldY, action]
+            oldPValues[action] -= self.ALPHA * oldPValues[action]
             
             # Add ALPHA * fraction for all actions except the action that was used
-            pValuesSum = self.pValues[oldX, oldY].sum()
-            denom = pValuesSum - self.pValues[oldX, oldY, action]
+            pValuesSum = oldPValues.sum()
+            denom = pValuesSum - oldPValues[action]
 
             for a in allActionsExcept(action):
                 if denom > 0:
                     # Normal case:
-                    num = self.pValues[oldX, oldY, a]
-                    self.pValues[oldX, oldY, a] += self.ALPHA * ((num / denom) - self.pValues[oldX, oldY, a]) 
+                    num = oldPValues[a]
+                    oldPValues(oldX, oldY)[a] += self.ALPHA * ((num / denom) - oldPValues(oldX, oldY)[a]) 
                 else:
                     # Special Rule 1: if denom is <= 0, put 1/3
-                    self.pValues[oldX, oldY, a] = 1 / (4 - 1)
+                    oldPValues(oldX, oldY)[a] = 1 / (4 - 1)
                     
         # Special rule 2: p values must be between 0 and 1
-        self.pValues[oldX, oldY, :] =  np.clip(self.pValues[oldX, oldY], 0, 1)
+        oldPValues = np.clip(oldPValues, 0, 1)
+        self.updatePValues(oldX, oldY, oldPValues)
             
         self.pos = newPos
+
+class ACLANormal(ACLA):
+    def __init__(self, maze, params):
+        super().__init__(maze, params)
+        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
+        self.pValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
+        
+        
+    def getVValue(self, x, y):
+        return self.vValues[x, y]
+    
+    def updateVValue(self, x, y, value):
+        self.vValues[x, y] = value
+    
+    def getPValues(self, x, y):
+        return self.pValues[x, y]
+    
+    def updatePValues(self, x, y, values):
+        self.pValues[x, y] = values
+
+    
+class ACLANeuronal(ACLA):
+    def __init__(self, maze, params):
+        super().__init__(maze, params)
+        self.nnV = ScikitNeuralNetwork()
+        self.nnP = ScikitNeuralNetwork()
+        self.obstacles = getNNEncodedObstacles(maze.obstacles)
+    
+    def getNNInput(self, x, y):
+        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
+        return nnInput.reshape(1, -1)
+    
+    def getVValue(self, x, y):
+        nnInput = self.getNNInput(x, y)
+        return self.nnV.predict(nnInput)[0][0]
+    
+    def updateVValue(self, x, y, value):
+        nnInput = self.getNNInput(x, y)
+        self.nnV.train(nnInput, [value])
+    
+    def getPValues(self, x, y):
+        nnInput = self.getNNInput(x, y)
+        return self.nnP.predict(nnInput)[0]
+    
+    def updatePValues(self, x, y, values):
+        nnInput = self.getNNInput(x, y)
+        self.nnP.train(nnInput, values)
 
 
     
