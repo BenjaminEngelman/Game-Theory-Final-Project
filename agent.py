@@ -40,7 +40,7 @@ class Agent():
             #numberOfSteps[episodeNum] = maze.actions_counter
 
             if episodeNum % 2500 == 2499:
-                #print("Done %d " % (episodeNum + 1))
+                # print("Done %d " % (episodeNum + 1))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
 
             if episodeNum + 2500 >= episodes:
@@ -98,8 +98,8 @@ algoParamsList = [param[2] for param in algos]
 ensembles = [
     ("Majority", majorityVote, algoParamsList, 1 / 1.6),
     ("Rank", rankVote, algoParamsList, 1 / 0.6),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsList, 1 / 0.2),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 1)
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsList, 1 / 1),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 0.2)
 ]
 
 
@@ -108,7 +108,13 @@ ensembles = [
 
 if __name__ == "__main__":
 
-    
+    # maze = createSimpleMaze()
+    # for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
+    #     print(name)
+    #     start = time.time()
+    #     agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
+    #     agent.learn(50000)
+    #     print("Took %d s" % (time.time() - start))
 
     # for name, algo, param in algos:
     #     maze = createSimpleMaze()
