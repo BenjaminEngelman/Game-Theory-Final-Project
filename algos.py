@@ -118,14 +118,24 @@ class QLearningNeuronal(QLearning):
         super().__init__(maze, params)
         self.nn = MLPRegressor(hidden_layer_sizes=(60, ), activation='logistic')
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
+        self.initNN()
+
+    def initNN(self):
+        xtrain = np.random.rand(256, 2 * WIDTH * HEIGHT)
+        ytrain = np.random.rand(256, 4)
+        self.nn.fit(xtrain, ytrain)
+
+    def getNNInput(self, x, y):
+        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
+        return nnInput.reshape(1, -1)
         
     def getQValues(self, x, y):
-        nnInput = self.obstacles + getNNEncodedPosition(x, y)
-        return self.nn.predict(nnInput)
+        nnInput = self.getNNInput(x, [y])
+        return self.nn.predict(nnInput)[0]
     
     def updateQValues(self, x, y, val):
-        nnInput = self.obstacles + getNNEncodedPosition(x, y)
-        self.nn.partial_fit(nnInput, val)
+        nnInput = self.getNNInput(x, y)
+        self.nn.partial_fit(nnInput, [val])
 
 
 class SARSA(Algorithm):
