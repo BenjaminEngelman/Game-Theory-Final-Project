@@ -86,34 +86,60 @@ class AgentWithEnsemble(Agent):
     def chooseAction(self):
         return self.ensembleMethod(self.algos, self.temp)
 
-algos = [
+####################################### EXPERIMENT 1 ###########################################
+
+algosExp1 = [
     ("Q-Learning", QLearningNormal, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
     ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
     ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
     ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
     ("ACLA", ACLA, AlgoParams(alpha=0.005, beta=0.1, gamma=0.99, temp=1/9))
 ]
-algoParamsList = [param[2] for param in algos]
+algoParamsListExp1 = [param[2] for param in algosExp1]
 
-ensembles = [
-    ("Majority", majorityVote, algoParamsList, 1 / 1.6),
-    ("Rank", rankVote, algoParamsList, 1 / 0.6),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsList, 1 / 1),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsList, 1/ 0.2)
+ensemblesExp1 = [
+    ("Majority", majorityVote, algoParamsListExp1, 1 / 1.6),
+    ("Rank", rankVote, algoParamsListExp1, 1 / 0.6),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp1, 1 / 1),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp1, 1/ 0.2)
 ]
 
+####################################### EXPERIMENT 3 ###########################################
+algosExp3 = [
+    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4)),
+    ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.002, gamma=0.98, temp=1/6))
+]
+algoParamsListExp3 = [param[2] for param in algosExp3]
 
-
+ensemblesExp3 = [
+    ("Majority", majorityVote, algoParamsListExp3, 1 / 2.6),
+    ("Rank", rankVote, algoParamsListExp3, 1 / 0.8),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2)
+]
+################################################################################################
 
 if __name__ == "__main__":
 
-    maze = createSimpleMaze()
-    for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
-        print(name)
-        start = time.time()
-        agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
-        agent.learn(50000)
-        print("Took %d s" % (time.time() - start))
+    maze = createDynamicObstaclesMaze()
+    start = time.time()
+    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algosExp3[0][2])
+    results = agent.learn(50000)
+    print("Took %d s" % (time.time() - start))
+    print(results)
+    saveToFile("nnQLearning.json", results)
+
+
+    # for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
+    #     print(name)
+    #     start = time.time()
+    #     #agent = AgentWithSingleAlgo(maze, ensembleMethod, algoParamsList, temp)
+    #     #agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
+    #     agent.learn(50000)
+    #     print("Took %d s" % (time.time() - start))
 
     # for name, algo, param in algos:
     #     maze = createSimpleMaze()
