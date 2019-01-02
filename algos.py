@@ -71,7 +71,7 @@ class QLearning(Algorithm):
         return self.getQValues(x, y)
         
     def getQValue(self, x, y, action):
-        return self.getQValues(pos=(x, y))[action]
+        return self.getQValues(x, y)[action]
     
     def setQValue(self, x, y, action, val):
         return NotImplementedError
