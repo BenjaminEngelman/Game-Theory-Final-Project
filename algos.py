@@ -269,25 +269,68 @@ class QVLearning(Algorithm):
         self.TEMP = params.TEMP
 
         self.pos = maze.start
-        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
-        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
-        return self.qValues[x, y]
-
+        self.getQValues(x, y)
+    
+    def getQValues(self, x, y):
+        raise NotImplementedError
+    
+    def getVValue(self, x, y):
+        raise NotImplementedError
+    
     def update(self, reward, newPos, action):
         oldX, oldY = self.pos
         newX, newY = newPos
-
-        self.vValues[oldX, oldY] += self.BETA * \
-            (reward + self.GAMMA *
-             self.vValues[newX, newY] - self.vValues[oldX, oldY])
-        self.qValues[oldX, oldY, action] += self.ALPHA * \
-            (reward + self.GAMMA *
-             self.vValues[newX, newY] - self.qValues[oldX, oldY, action])
-
+        
+        VValue = self.getVValue(oldX, oldY)
+        VValue += self.BETA * (reward + self.GAMMA * self.getVValue(newX, newY) - self.getVValue(oldX, oldY))
+        self.updateVValue(oldX, oldY, VValue)
+        
+        QValues = self.getQValues(oldX, oldY)
+        QValues[action] += self.ALPHA * (reward + self.GAMMA * self.getVValue(newX, newY) - self.getQValues(oldX, oldY)[action])
+        self.updateQValues(oldX, oldY, QValues)
         self.pos = newPos
+
+class QVLearningNormal(QVLearning):
+    def __init__(self, maze, params):
+        super().__init__(maze, params)
+        self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
+        self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
+
+    def getQValues(self, x, y):
+        return self.qValues[x, y]
+    
+    def getVValue(self, x, y):
+        return self.vValues[x, y]
+
+    def updateQValues(self, x, y, val):
+        self.qValues[x, y] = val
+    
+    def updateVValue(self, x, y, val):
+        self.vValues[x, y] = val
+
+
+class QVLearningNeuronal(QVLearning):
+    def __init__(self, maze, params):
+        super().__init__(maze, params)
+        self.nnQ = ScikitNeuralNetwork()
+        self.nnV = ScikitNeuralNetwork()
+        self.obstacles = getNNEncodedObstacles(maze.obstacles)
+        
+
+    def getNNInput(self, x, y):
+        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
+        return nnInput.reshape(1, -1)
+        
+    def getQValues(self, x, y):
+        nnInput = self.getNNInput(x, y)
+        return self.nnQ.predict(nnInput)[0]
+    
+    def updateQValues(self, x, y, val):
+        nnInput = self.getNNInput(x, y)
+        self.nnQ.train(nnInput, val)
 
 
 class ActorCritic(Algorithm):
