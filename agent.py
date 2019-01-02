@@ -87,7 +87,7 @@ class AgentWithEnsemble(Agent):
         return self.ensembleMethod(self.algos, self.temp)
 
 algos = [
-    ("Q-Learning", QLearning, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
+    ("Q-Learning", QLearningNormal, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
     ("SARSA", SARSA, AlgoParams(alpha=0.2, gamma=0.9, temp=1)),
     ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.1, beta=0.2, gamma=0.95, temp=1)),
     ("QV-Learning", QVLearning, AlgoParams(alpha=0.2, beta=0.2, gamma=0.9, temp=1)),
@@ -107,13 +107,13 @@ ensembles = [
 
 if __name__ == "__main__":
 
-    # maze = createSimpleMaze()
-    # for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
-    #     print(name)
-    #     start = time.time()
-    #     agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
-    #     agent.learn(50000)
-    #     print("Took %d s" % (time.time() - start))
+    maze = createSimpleMaze()
+    for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
+        print(name)
+        start = time.time()
+        agent = AgentWithEnsemble(maze, ensembleMethod, algoParamsList, temp)
+        agent.learn(50000)
+        print("Took %d s" % (time.time() - start))
 
     # for name, algo, param in algos:
     #     maze = createSimpleMaze()
