@@ -91,7 +91,7 @@ class QLearning(Algorithm):
 class QLearningNormal(QLearning):
     def __init__(self, maze, params):
         # TODO: check this
-        super.__init__(maze, params)
+        super().__init__(maze, params)
         self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
     def updateQValue(self, x, y, action, val):
@@ -105,7 +105,7 @@ class QLearningNormal(QLearning):
 class QLearningNeuronal(QLearning):
     def __init__(self, maze, params):
         # TODO: check this
-        super.__init__(maze, params)
+        super().__init__(maze, params)
         # TODO: initialize the neural network
         pass
 
