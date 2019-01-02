@@ -3,6 +3,8 @@ from helper import boltzmann
 from mazes import WIDTH, HEIGHT
 from sklearn.neural_network import MLPRegressor
 
+
+
        
 def getNNEncodedObstacles(obstacles):
     nnObstacles = np.zeros(shape=(WIDTH, HEIGHT))
@@ -14,6 +16,44 @@ def getNNEncodedPosition(x, y):
     nnPosition = np.zeros(shape=(WIDTH, HEIGHT))
     nnPosition[x, y] = 1
     return nnPosition.reshape(-1)
+
+class ScikitNeuralNetwork():
+    def __init__(self):
+        self.nn = MLPRegressor(hidden_layer_sizes=(60, ), activation='logistic')
+        self.initNN()
+
+    def initNN(self):
+        xtrain = np.random.rand(256, 2 * WIDTH * HEIGHT)
+        ytrain = np.random.rand(256, 4)
+        self.nn.fit(xtrain, ytrain)
+
+    def predict(self, x):
+        return self.nn.predict(x)
+    
+    def train(self, x, val):
+        self.nn.partial_fit(x, [val])
+
+class KerasNeuralNetwork():
+    def __init__(self):
+        from keras.models import Sequential
+        from keras.layers import Dense
+        import keras
+        self.nn = Sequential()
+        self.nn.add(Dense(units=60, activation='sigmoid', input_dim=2 * WIDTH * HEIGHT))
+        self.nn.add(Dense(units=4, activation='sigmoid'))
+        self.nn.compile(
+            loss=keras.losses.categorical_crossentropy,
+            optimizer=keras.optimizers.SGD(lr=0.01, momentum=0.9, nesterov=True),
+            metrics=['accuracy']
+        )
+        print("Model compiled and ready to run!")
+
+    def predict(self, x):
+        return self.nn.predict(x) #[0]
+    
+    def train(self, x, val):
+        self.nn.train_on_batch(x, np.array([val]))
+
 
 class Algorithm():
 
@@ -116,26 +156,21 @@ class QLearningNormal(QLearning):
 class QLearningNeuronal(QLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nn = MLPRegressor(hidden_layer_sizes=(60, ), activation='logistic')
+        self.nn = KerasNeuralNetwork()
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
-        self.initNN()
-
-    def initNN(self):
-        xtrain = np.random.rand(256, 2 * WIDTH * HEIGHT)
-        ytrain = np.random.rand(256, 4)
-        self.nn.fit(xtrain, ytrain)
+        
 
     def getNNInput(self, x, y):
         nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
         return nnInput.reshape(1, -1)
         
     def getQValues(self, x, y):
-        nnInput = self.getNNInput(x, [y])
+        nnInput = self.getNNInput(x, y)
         return self.nn.predict(nnInput)[0]
     
     def updateQValues(self, x, y, val):
         nnInput = self.getNNInput(x, y)
-        self.nn.partial_fit(nnInput, [val])
+        self.nn.train(nnInput, val)
 
 
 class SARSA(Algorithm):
