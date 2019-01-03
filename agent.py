@@ -67,17 +67,26 @@ class AgentWithSingleAlgo(Agent):
 
 class AgentWithEnsemble(Agent):
 
-    def __init__(self, maze, ensembleMethod, algoParamsList, temp):
+    def __init__(self, maze, ensembleMethod, algoParamsList, temp, neural=False):
         self.maze = maze
         self.temp = temp
         self.ensembleMethod = ensembleMethod
-        self.algos = [
-            QLearningNormal(maze, algoParamsList[0]),
-            SARSA(maze, algoParamsList[1]),
-            ActorCritic(maze, algoParamsList[2]),
-            QVLearning(maze, algoParamsList[3]),
-            ACLA(maze, algoParamsList[4])
-        ]
+        if not neural:
+            self.algos = [
+                QLearningNormal(maze, algoParamsList[0]),
+                SARSANormal(maze, algoParamsList[1]),
+                ActorCriticNormal(maze, algoParamsList[2]),
+                QVLearningNormal(maze, algoParamsList[3]),
+                ACLANormal(maze, algoParamsList[4])
+            ]
+        else:
+            self.algos = [
+                QLearningNeuronal(maze, algoParamsList[0]),
+                SARSANeuronal(maze, algoParamsList[1]),
+                ActorCriticNeuronal(maze, algoParamsList[2]),
+                QVLearningNeuronal(maze, algoParamsList[3]),
+                ACLANeuronal(maze, algoParamsList[4])
+            ]
 
     def update(self, reward, new_state, action):
         for algo in self.algos:
@@ -126,7 +135,7 @@ if __name__ == "__main__":
 
     maze = createDynamicObstaclesMaze()
     start = time.time()
-    agent = AgentWithSingleAlgo(maze, ACLANeuronal, algosExp3[4][2])
+    agent = AgentWithEnsemble(maze, boltzmannMultVote, algoParamsListExp3, 1/ 0.2, neural=True)
     results = agent.learn(50000)
     print("Took %d s" % (time.time() - start))
     print(results)
