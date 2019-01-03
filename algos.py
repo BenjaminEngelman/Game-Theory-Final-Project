@@ -196,11 +196,11 @@ class SARSA(Algorithm):
         nextAction = self.getMostProbableAction(newPos)
 
         qValueOfNextAction = self.getQValues(newX, newY)[nextAction]
-        Qvalues = self.getQValue(oldX, oldY)
+        Qvalues = self.getQValues(oldX, oldY)
         Qvalues[action] += self.ALPHA * \
             (reward + self.GAMMA * qValueOfNextAction -
              Qvalues[action])
-        self.updateQValues(oldX, oldY, QValues)
+        self.updateQValues(oldX, oldY, Qvalues)
         self.pos = newPos
 
 class SARSANormal(SARSA):
@@ -253,7 +253,7 @@ class ACLA(Algorithm):
     
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
-        return self.pValues[x, y]
+        return self.getPValues(x, y)
     
     def getVValue(self, x, y): return NotImplementedError
     def updateVValue(self, x, y, val): return NotImplementedError
@@ -291,10 +291,10 @@ class ACLA(Algorithm):
                 if denom > 0:
                     # Normal case:
                     num = oldPValues[a]
-                    oldPValues(oldX, oldY)[a] += self.ALPHA * ((num / denom) - oldPValues(oldX, oldY)[a]) 
+                    oldPValues[a] += self.ALPHA * ((num / denom) - oldPValues[a]) 
                 else:
                     # Special Rule 1: if denom is <= 0, put 1/3
-                    oldPValues(oldX, oldY)[a] = 1 / (4 - 1)
+                    oldPValues[a] = 1 / (4 - 1)
                     
         # Special rule 2: p values must be between 0 and 1
         oldPValues = np.clip(oldPValues, 0, 1)
@@ -339,7 +339,7 @@ class ACLANeuronal(ACLA):
     
     def updateVValue(self, x, y, value):
         nnInput = self.getNNInput(x, y)
-        self.nnV.train(nnInput, [value])
+        self.nnV.train(nnInput, value)
     
     def getPValues(self, x, y):
         nnInput = self.getNNInput(x, y)
@@ -363,7 +363,7 @@ class QVLearning(Algorithm):
 
     def getValues(self, pos):
         x, y = pos if pos is not None else self.pos
-        self.getQValues(x, y)
+        return self.getQValues(x, y)
     
     def getVValue(self, x, y): return NotImplementedError
     def updateVValue(self, x, y, val): return NotImplementedError
@@ -423,7 +423,7 @@ class QVLearningNeuronal(QVLearning):
     
     def updateVValue(self, x, y, value):
         nnInput = self.getNNInput(x, y)
-        self.nnV.train(nnInput, [value])
+        self.nnV.train(nnInput, value)
         
     def getQValues(self, x, y):
         nnInput = self.getNNInput(x, y)
@@ -505,7 +505,7 @@ class ActorCriticNeuronal(ActorCritic):
     
     def updateVValue(self, x, y, value):
         nnInput = self.getNNInput(x, y)
-        self.nnV.train(nnInput, [value])
+        self.nnV.train(nnInput, value)
     
     def getPValues(self, x, y):
         nnInput = self.getNNInput(x, y)

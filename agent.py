@@ -38,7 +38,7 @@ class Agent():
 
             #allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
             #numberOfSteps[episodeNum] = maze.actions_counter
-
+            print(episodeNum, self.maze.actions_counter)
             if episodeNum % 2500 == 2499:
                 print("Done %d " % (episodeNum + 1))
                 rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     maze = createDynamicObstaclesMaze()
     start = time.time()
-    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algosExp3[0][2])
+    agent = AgentWithSingleAlgo(maze, ACLANeuronal, algosExp3[4][2])
     results = agent.learn(50000)
     print("Took %d s" % (time.time() - start))
     print(results)
