@@ -144,6 +144,12 @@ class Maze:
                 observation[i] = 0 if observation[i] == 1 else 0
 
         return observation
+    
+    def getProbabilityOfSeeingWallObservationAt(self, seenWall, s):
+        if (self.isObstacle(s) or self.isOutOfBounds(s)) == seenWall: # if seen correctly
+            return 0.9
+        else:
+            return 0.1
 
 
 
@@ -230,14 +236,15 @@ def initBeliefState(obstacles):
     return beliefState
 
 def manathanDistance(s, newS):
-    x, y, newX, newY = s, newS
+    x, y = s
+    newX, newY = newS
     return abs(newX - x) + abs(newY -y)
 
 
 def allNeighbors(x, y):
     return [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
 
-def T(s, a, newS):
+def T(maze, s, a, newS):
     sX, sY = s
     deltaX, deltaY = a
     newX, newY = sX + deltaX, sY + deltaY
@@ -247,7 +254,7 @@ def T(s, a, newS):
     elif s == newS:
         res = 0
         for neighbor in allNeighbors(sX, sY):
-            if isObstacle(neighbor) or isOutOfBound(neighbor):
+            if maze.isObstacle(neighbor) or maze.isOutOfBounds(neighbor):
                 if neighbor == (newX, newY):
                     res += 0.8     # 80.0%
                 else:
@@ -259,39 +266,34 @@ def T(s, a, newS):
     else:
         return 0.2
 
-def getProbabilityOfSeeingWallObservationAt(seenWall, x, y):
-    if (isWall(x, y) or isOutOfBounds(x, y)) == seenWall: # if seen correctly
-        return 0.9
-    else:
-        return 0.1
 
-def P(observation, s):
-    x, y = s
+
+def P(maze, observation, s):
     res = 1
     for wallObs in observation:
-        res *= getProbabilityOfSeeingWallObservationAt(wallObs, x, y)
+        res *= maze.getProbabilityOfSeeingWallObservationAt(wallObs, s)
     return res
              
     
 def possiblePositions(x, y):
     return allNeighbors(x, y) + [(x, y)]
 
-def normalisation(obs, beliefState, action):
+def normalisation(maze, obs, beliefState, action):
     p = 0
     for newS in ALL_POSITIONS:
         for oldS in ALL_POSITIONS:
-            p += P(obs, newS) * T(oldS, action, newS) * beliefState[oldS]
+            p += P(maze, obs, newS) * T(maze, oldS, action, newS) * beliefState[oldS]
 
     return 1 / p
 
-def updateB(beliefState, newS, obs, action):
+def updateB(maze, beliefState, newS, obs, action):
     # Compute new value
     newX, newY = newS
     res = 0
     for oldS in possiblePositions(newX, newY):
-        res += T(oldS, action, newS) * beliefState[oldS]
-    res *= P(obs, newS)
-    res *= normalisation(obs, beliefState, action)
+        res += T(maze, oldS, action, newS) * beliefState[oldS]
+    res *= P(maze, obs, newS)
+    res *= normalisation(maze, obs, beliefState, action)
     
     # Update value in matrix
     beliefState[newS] = res
