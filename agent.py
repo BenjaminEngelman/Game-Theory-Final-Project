@@ -25,8 +25,8 @@ class Agent():
     def learn(self, episodes):
         last2500RewardIntakes = np.zeros(2500)
         rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
-        allRewardIntakes = np.zeros(50000)
-        numberOfSteps = np.zeros(50000)
+        allRewardIntakes = np.zeros(episodes)
+        numberOfSteps = np.zeros(episodes)
 
         for episodeNum in range(episodes):
             episodeReward = 0
@@ -119,11 +119,11 @@ ensemblesExp1 = [
 
 ####################################### EXPERIMENT 3 ###########################################
 algosExp3 = [
-    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
-    ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1)),
-    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1)),
-    ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4)),
-    ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.002, gamma=0.98, temp=1/6))
+    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1, numHiddenNodes=60)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1, numHiddenNodes=60)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1, numHiddenNodes=60)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4, numHiddenNodes=60)),
+    ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.002, gamma=0.98, temp=1/6, numHiddenNodes=60))
 ]
 algoParamsListExp3 = [param[2] for param in algosExp3]
 
