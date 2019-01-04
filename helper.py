@@ -14,10 +14,18 @@ def boltzmann(values, temp):
 import json
 import numpy
 
+def convertToJsonSerializable(data):
+	if type(data) == numpy.ndarray:
+		data = data.tolist()
+	return data
+
 def saveToFile(filename, data):
     with open(filename, 'w') as f:
         if type(data) == numpy.ndarray:
-            data = data.tolist()
+            data = convertToJsonSerializable(data)
+        elif type(data) == tuple:
+            data = tuple([convertToJsonSerializable(x) for x in data])
+			
 
         json.dump(data, f)
 
