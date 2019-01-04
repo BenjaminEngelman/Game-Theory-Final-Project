@@ -14,8 +14,8 @@ if len(sys.argv) < 3:
     exit(0)
 
 mode = sys.argv[1]
-if mode not in ['single', 'ensemble']:
-    print("Invalid mode, pass either 'single' or 'ensemble'")
+if mode not in ['single', 'ensemble', 'full']:
+    print("Invalid mode, pass either 'single', 'ensemble' or 'full'")
     exit(0)
 
 expNum = int(sys.argv[2])
@@ -100,6 +100,21 @@ def addJobsEnsemble(jobs, pool):
         for ensembleName, ensemble, algoParams, temp in ensembles:
             jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps, maze, beliefState))
 
+def addJobsFull(jobs, pool):
+numSteps = NUM_STEPS
+for i in range(NUM_TRIALS):
+    maze = mazeGenerator()
+
+    if getBeliefState is None:
+        beliefState = None
+    else:
+        beliefState = initBeliefState(maze.obstacles)
+
+    for ensembleName, ensemble, algoParams, temp in ensembles:
+        jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps, maze, beliefState))
+
+    for algorithmName, algorithm, algoParams in algos:
+        jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams, numSteps, maze, beliefState))
 
 
 #def jobDone(key):
@@ -111,4 +126,7 @@ if mode == 'single':
     saveComplexJson(resultsFilename, results)
 elif mode == 'ensemble':
     results = parallelize(addJobsEnsemble, numProcesses=NUM_PROCESSES)
+    saveComplexJson(resultsFilename, results)
+elif mode == 'full':
+    results = parallelize(addJobsFull, numProcesses=NUM_PROCESSES)
     saveComplexJson(resultsFilename, results)
