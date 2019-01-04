@@ -15,7 +15,7 @@ if mode not in ['single', 'ensemble']:
 
 
 
-def runTrialSingleAlgorithm(algorithm, params):
+def runTrialSingleAlgorithm(algorithm, params, numSteps):
     maze = createSimpleMaze()
     agent = AgentWithSingleAlgo(maze, algorithm, params)
 
@@ -23,23 +23,25 @@ def runTrialSingleAlgorithm(algorithm, params):
     # Il mesure deux choses
     # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
     # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
-    final, cumulative = agent.learn(50000)
+    final, cumulative = agent.learn(numSteps)
     return final, cumulative
 
-def runTrialEnsemble(ensemble, algoParams, temp):
+def runTrialEnsemble(ensemble, algoParams, temp, numSteps):
     maze = createSimpleMaze()
     agent = AgentWithEnsemble(maze, ensemble, algoParams, temp)
-    final, cumulative = agent.learn(50000)
+    final, cumulative = agent.learn(numSteps)
     return final, cumulative
 
 
 
 def addJobsSingleAlgorithm(jobs, pool):
+    numSteps = 50000
     for i in range(500):
         for algorithmName, algorithm, algoParams in algos:
             jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams))
 
 def addJobsEnsemble(jobs, pool):
+    numSteps = 50000
     for i in range(500):
         for ensembleName, ensemble, algoParams, temp in ensembles:
             jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp))
