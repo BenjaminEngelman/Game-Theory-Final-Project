@@ -113,7 +113,7 @@ class Maze:
         
         return False
 
-    def isObstacle(position):
+    def isObstacle(self, position):
         return position in self.obstacles
 
     def render(self):
