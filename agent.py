@@ -116,6 +116,7 @@ ensemblesExp1 = [
     ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp1, 1 / 1),
     ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp1, 1/ 0.2)
 ]
+################################################################################################
 
 ####################################### EXPERIMENT 3 ###########################################
 algosExp3 = [
@@ -134,6 +135,50 @@ ensemblesExp3 = [
     ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2)
 ]
 ################################################################################################
+
+
+####################################### EXPERIMENT 4 ###########################################
+algosExp4 = [
+    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1, numHiddenNodes=20)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1, numHiddenNodes=20)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1, numHiddenNodes=20)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4, numHiddenNodes=20)),
+    ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.006, gamma=0.98, temp=1/10, numHiddenNodes=20))
+]
+algoParamsListExp4 = [param[2] for param in algosExp4]
+
+ensemblesExp4 = [
+    ("Majority", majorityVote, algoParamsListExp3, 1 / 2.4),
+    ("Rank", rankVote, algoParamsListExp3, 1 / 1.2),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 0.2),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1 / 1)
+]
+################################################################################################
+
+
+
+####################################### EXPERIMENT 5 ###########################################
+algosExp5 = [
+    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.003, gamma=0.95, temp=1 / 0.3, numHiddenNodes=100)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.003, gamma=0.92, temp=1 / 0.3, numHiddenNodes=100)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.014, beta=0.0015, gamma=0.95, temp=1 / 0.5, numHiddenNodes=100)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.002, beta=0.001, gamma=0.95, temp=1/0.2, numHiddenNodes=100)),
+    ("ACLA", ACLA, AlgoParams(alpha=0.1, beta=0.001, gamma=0.98, temp=1/5, numHiddenNodes=100))
+]
+algoParamsListExp5 = [param[2] for param in algosExp5]
+
+ensemblesExp5 = [
+    ("Majority", majorityVote, algoParamsListExp3, 1 / 2.4),
+    ("Rank", rankVote, algoParamsListExp3, 1 / 1.0),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 0.2),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 1)
+]
+################################################################################################
+
+
+
+
+
 
 if __name__ == "__main__":
 
