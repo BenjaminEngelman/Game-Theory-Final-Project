@@ -113,8 +113,8 @@ algoParamsListExp1 = [param[2] for param in algosExp1]
 ensemblesExp1 = [
     ("Majority", majorityVote, algoParamsListExp1, 1 / 1.6),
     ("Rank", rankVote, algoParamsListExp1, 1 / 0.6),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp1, 1/ 0.2),
     ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp1, 1 / 1),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp1, 1/ 0.2)
 ]
 ################################################################################################
 
@@ -131,8 +131,9 @@ algoParamsListExp3 = [param[2] for param in algosExp3]
 ensemblesExp3 = [
     ("Majority", majorityVote, algoParamsListExp3, 1 / 2.6),
     ("Rank", rankVote, algoParamsListExp3, 1 / 0.8),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2),
     ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2)
+    
 ]
 ################################################################################################
 
@@ -150,8 +151,8 @@ algoParamsListExp4 = [param[2] for param in algosExp4]
 ensemblesExp4 = [
     ("Majority", majorityVote, algoParamsListExp3, 1 / 2.4),
     ("Rank", rankVote, algoParamsListExp3, 1 / 1.2),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 0.2),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1 / 1)
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1 / 0.2),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
 ]
 ################################################################################################
 
@@ -170,8 +171,8 @@ algoParamsListExp5 = [param[2] for param in algosExp5]
 ensemblesExp5 = [
     ("Majority", majorityVote, algoParamsListExp3, 1 / 2.4),
     ("Rank", rankVote, algoParamsListExp3, 1 / 1.0),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 0.2),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 1)
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
 ]
 ################################################################################################
 
