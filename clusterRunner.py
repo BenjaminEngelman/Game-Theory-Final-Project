@@ -38,13 +38,13 @@ def addJobsSingleAlgorithm(jobs, pool):
     numSteps = 50000
     for i in range(500):
         for algorithmName, algorithm, algoParams in algos:
-            jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams))
+            jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams, numSteps))
 
 def addJobsEnsemble(jobs, pool):
     numSteps = 50000
     for i in range(500):
         for ensembleName, ensemble, algoParams, temp in ensembles:
-            jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp))
+            jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps))
 
 
 
