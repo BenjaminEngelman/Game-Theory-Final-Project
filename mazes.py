@@ -234,7 +234,7 @@ def manathanDistance(s, newS):
     return abs(newX - x) + abs(newY -y)
 
 
-def neighbors(x, y):
+def allNeighbors(x, y):
     return [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
 
 def T(s, a, newS):
@@ -246,7 +246,7 @@ def T(s, a, newS):
         return 0
     elif s == newS:
         res = 0
-        for neighbor in neighbors(sX, sY):
+        for neighbor in allNeighbors(sX, sY):
             if isObstacle(neighbor) or isOutOfBound(neighbor):
                 if neighbor == (newX, newY):
                     res += 0.8     # 80.0%
@@ -274,7 +274,7 @@ def P(observation, s):
              
     
 def possiblePositions(x, y):
-    return neighbors(x, y) + [(x, y)]
+    return allNeighbors(x, y) + [(x, y)]
 
 def normalisation(obs, beliefState, action):
     p = 0
