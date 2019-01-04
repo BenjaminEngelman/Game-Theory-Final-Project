@@ -61,10 +61,10 @@ algosExp4 = [
 algoParamsListExp4 = [param[2] for param in algosExp4]
 
 ensemblesExp4 = [
-    ("Majority", majorityVote, algoParamsListExp3, 1 / 2.4),
-    ("Rank", rankVote, algoParamsListExp3, 1 / 1.2),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1 / 0.2),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
+    ("Majority", majorityVote, algoParamsListExp4, 1 / 2.4),
+    ("Rank", rankVote, algoParamsListExp4, 1 / 1.2),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp4, 1 / 0.2),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp4, 1 / 1),
 ]
 ################################################################################################
 
@@ -81,8 +81,8 @@ algosExp5 = [
 algoParamsListExp5 = [param[2] for param in algosExp5]
 
 ensemblesExp5 = [
-    ("Majority", majorityVote, algoParamsListExp3, 1 / 2.4),
-    ("Rank", rankVote, algoParamsListExp3, 1 / 1.0),
-    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
+    ("Majority", majorityVote, algoParamsListExp5, 1 / 2.4),
+    ("Rank", rankVote, algoParamsListExp5, 1 / 1.0),
+    ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp5, 1/ 0.2),
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp5, 1 / 1),
 ]
