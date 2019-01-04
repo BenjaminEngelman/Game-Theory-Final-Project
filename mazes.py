@@ -130,6 +130,21 @@ class Maze:
             print('|')
         print("-" * (WIDTH + 2))
 
+    def getObservation(self):
+        observation = np.zeros(4)
+
+        for i, move in enumerate(self.neighbors(self.agent_position)):
+            if self.isOutOfBounds(move) or move in self.obstacles:
+                observation[i] = 1
+            else:
+                observation[i] = 0
+
+            if np.random.random() < 0.1:
+                observation[i] = 0 if observation[i] == 1 else 0
+
+        return observation
+
+
 
 #########################
 #### Maze generators ####
