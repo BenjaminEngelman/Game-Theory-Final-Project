@@ -294,8 +294,8 @@ def P(maze, observation, s):
     return res
 
 
-def possiblePositions(x, y):
-    return allNeighbors(x, y) + [(x, y)]
+def possiblePositions(maze, x, y):
+    return maze.neighbors((x, y)) + [(x, y)]
 
 
 def normalisation(maze, obs, beliefState, action):
@@ -311,7 +311,7 @@ def updateBeliefState(maze, beliefState, newS, obs, action):
     # Compute new value
     newX, newY = newS
     res = 0
-    for oldS in possiblePositions(newX, newY):
+    for oldS in possiblePositions(maze, newX, newY):
         res += T(maze, oldS, action, newS) * beliefState[oldS]
     res *= P(maze, obs, newS)
     res *= normalisation(maze, obs, beliefState, action)
