@@ -17,9 +17,10 @@ if mode not in ['single', 'ensemble']:
     exit(0)
 
 expNum = sys.argv[2]
-if expNum not in [3, 4, 5]:
+if expNum not in ["3", "4", "5"]:
     print("Invalid mode, pass either 3, 4 or 5")
     exit(0)
+
 
 if expNum == 3:
     algoParams = algoParamsListExp3
