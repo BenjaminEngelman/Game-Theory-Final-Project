@@ -4,6 +4,9 @@ from mazes import *
 from experimentConf import *
 import sys
 
+NUM_STEPS = 20000
+NUM_TRIALS = 50
+
 if len(sys.argv) < 3:
     print("Not enough arguments, pass either 'single' or 'ensemble and the experiment number'")
     exit(0)
@@ -41,31 +44,26 @@ elif expNum == 5:
 
 def runTrialSingleAlgorithm(algorithm, params, numSteps, maze):
     agent = AgentWithSingleAlgo(maze, algorithm, params)
-
-    # reward intake = reward moyen par mouvement
-    # Il mesure deux choses
-    # 1) Dans 2500 derniers épisodes, fait la moyenne du reward intake
-    # 2) Tous les 2500 épisodes, regarde quel est le reward intake, puis à la fin il fait la somme
-    final, cumulative = agent.learn(numSteps)
-    return final, cumulative
+    StepsOverTime, rewardsOverTime = agent.learn(numSteps)
+    return StepsOverTime, rewardsOverTime
 
 def runTrialEnsemble(ensemble, algoParams, temp, numSteps, maze):
     agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, neural=True)
-    final, cumulative = agent.learn(numSteps)
-    return final, cumulative
+    StepsOverTime, rewardsOverTime = agent.learn(numSteps)
+    return StepsOverTime, rewardsOverTime
 
 
 
-def addJobsSingleAlgorithm(jobs, pool, mazeGenerator):
-    numSteps = 20000
-    for i in range(500):
+def addJobsSingleAlgorithm(jobs, pool):
+    numSteps = NUM_STEPS
+    for i in range(NUM_TRIALS):
         maze = mazeGenerator()
         for algorithmName, algorithm, algoParams in algos:
             jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams, numSteps, maze))
 
 def addJobsEnsemble(jobs, pool):
-    numSteps = 50000
-    for i in range(500):
+    numSteps = NUM_STEPS
+    for i in range(NUM_TRIALS):
         maze = mazeGenerator()
         for ensembleName, ensemble, algoParams, temp in ensembles:
             jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps, maze))

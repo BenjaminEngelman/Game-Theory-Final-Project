@@ -23,8 +23,8 @@ class Agent():
         raise NotImplementedError
 
     def learn(self, episodes):
-        last2500RewardIntakes = np.zeros(2500)
-        rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
+        # last2500RewardIntakes = np.zeros(2500)
+        # rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
         allRewardIntakes = np.zeros(episodes)
         numberOfSteps = np.zeros(episodes)
 
