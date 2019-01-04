@@ -151,7 +151,7 @@ class QLearningNormal(QLearning):
 class QLearningNeuronal(QLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nn = ScikitNeuralNetwork()
+        self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         
 
@@ -218,7 +218,7 @@ class SARSANormal(SARSA):
 class SARSANeuronal(SARSA):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nn = ScikitNeuralNetwork()
+        self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         
 
@@ -325,8 +325,8 @@ class ACLANormal(ACLA):
 class ACLANeuronal(ACLA):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nnV = ScikitNeuralNetwork()
-        self.nnP = ScikitNeuralNetwork()
+        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
     
     def getNNInput(self, x, y):
@@ -407,8 +407,8 @@ class QVLearningNormal(QVLearning):
 class QVLearningNeuronal(QVLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nnV = ScikitNeuralNetwork()
-        self.nnQ = ScikitNeuralNetwork()
+        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.nnQ = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
 
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         
@@ -491,8 +491,8 @@ class ActorCriticNormal(ActorCritic):
 class ActorCriticNeuronal(ActorCritic):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nnV = ScikitNeuralNetwork()
-        self.nnP = ScikitNeuralNetwork()
+        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
     
     def getNNInput(self, x, y):
