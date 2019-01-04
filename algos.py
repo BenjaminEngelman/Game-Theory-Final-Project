@@ -1,6 +1,6 @@
 import numpy as np
 from helper import boltzmann
-from mazes import WIDTH, HEIGHT
+from mazes import WIDTH, HEIGHT, updateBeliefState
 from sklearn.neural_network import MLPRegressor
 
 
@@ -55,15 +55,18 @@ class KerasNeuralNetwork():
         self.nn.train_on_batch(x, np.array([val]))
 
 
-def makeNNInput3(x, y, obstacles, goalX, goalY):
+def makeNNInput2(beliefState, x, y, obstacles, goalX, goalY):
+    return beliefState.reshape(1, -1)
+
+def makeNNInput3(beliefState, x, y, obstacles, goalX, goalY):
     nnInput = np.concatenate((obstacles, getNNEncodedPosition(x, y)))
     return nnInput.reshape(1, -1)
 
-def makeNNInput4(x, y, obstacles, goalX, goalY):
+def makeNNInput4(beliefState, x, y, obstacles, goalX, goalY):
     nnInput = np.concatenate((getNNEncodedPosition(x, y), getNNEncodedPosition(goalX, goalY)))
     return nnInput.reshape(1, -1)
 
-def makeNNInput5(x, y, obstacles, goalX, goalY):
+def makeNNInput5(beliefState, x, y, obstacles, goalX, goalY):
     nnInput = np.concatenate((getNNEncodedPosition(x, y), getNNEncodedPosition(goalX, goalX), obstacles))
     return nnInput.reshape(1, -1)
 
@@ -77,11 +80,11 @@ class Algorithm():
 
     # TEMP = ...
 
-    def update(self, reward, newPos, action):
+    def updateInternalBeliefState(self, obs, reward, newPos, action):
         """
-        Updates the internal state of the algorithm.
+        Updates the internal state of the algorithm. Only overriden by neural algorithms
         """
-        return NotImplementedError
+        pass
 
     def getValues(self, pos):
         """
@@ -126,6 +129,8 @@ class QLearning(Algorithm):
         self.ALPHA = params.ALPHA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
+        self.maze = maze
+        self.beliefState = None # Overridden in neural version when in experiment 2
 
         self.pos = maze.start
 
@@ -140,7 +145,9 @@ class QLearning(Algorithm):
         return NotImplementedError
     
     
-    def update(self, reward, newPos, action):
+    def update(self, reward, newPos, action, obs):
+        self.updateInternalBeliefState(obs, reward, newPos, action)
+
         oldX, oldY = self.pos
         newX, newY = newPos
         bestQValueInNextPos = np.max(self.getQValues(newX, newY))
@@ -162,22 +169,27 @@ class QLearningNormal(QLearning):
 
 
 class QLearningNeuronal(QLearning):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, beliefState=None):
         super().__init__(maze, params)
         self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         self.makeNNInput = params.MAKE_NN_INPUT
         self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
+        if beliefState is not None:
+            self.beliefState = np.copy(beliefState)
         
+    def updateInternalBeliefState(self, obs, reward, newPos, action):
+        if self.beliefState is not None:
+            updateBeliefState(self.maze, self.beliefState, newPos, obs, action)
 
     def getQValues(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nn.predict(nnInput)[0]
     
     def updateQValues(self, x, y, val):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nn.train(nnInput, val)
 
 
@@ -187,6 +199,8 @@ class SARSA(Algorithm):
         self.ALPHA = params.ALPHA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
+        self.maze = maze
+        self.beliefState = None # Overridden in neural version when in experiment 2
         
         self.pos = maze.start
         
@@ -200,7 +214,9 @@ class SARSA(Algorithm):
     def updateQValues(self, x, y, val):
         return NotImplementedError
 
-    def update(self, reward, newPos, action):
+    def update(self, reward, newPos, action, obs):
+        self.updateInternalBeliefState(obs, reward, newPos, action)
+
         oldX, oldY = self.pos
         newX, newY = newPos
 
@@ -229,21 +245,27 @@ class SARSANormal(SARSA):
 
 
 class SARSANeuronal(SARSA):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, beliefState=None):
         super().__init__(maze, params)
         self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         self.makeNNInput = params.MAKE_NN_INPUT
         self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
+        if beliefState is not None:
+            self.beliefState = np.copy(beliefState)
         
+    def updateInternalBeliefState(self, obs, reward, newPos, action):
+        if self.beliefState is not None:
+            updateBeliefState(self.maze, self.beliefState, newPos, obs, action)
+
     def getQValues(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nn.predict(nnInput)[0]
     
     def updateQValues(self, x, y, val):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nn.train(nnInput, val)
     
     
@@ -259,6 +281,8 @@ class ACLA(Algorithm):
         self.BETA = params.BETA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
+        self.maze = maze
+        self.beliefState = None # Overridden in neural version when in experiment 2
 
         self.pos = maze.start
 
@@ -272,7 +296,9 @@ class ACLA(Algorithm):
     def getPValues(self, x, y): return NotImplementedError
     def updatePValues(self, x, y, values): return NotImplementedError
     
-    def update(self, reward, newPos, action):
+    def update(self, reward, newPos, action, obs):
+        self.updateInternalBeliefState(obs, reward, newPos, action)
+
         oldX, oldY = self.pos
         newX, newY = newPos
         
@@ -335,34 +361,39 @@ class ACLANormal(ACLA):
 
     
 class ACLANeuronal(ACLA):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, beliefState=None):
         super().__init__(maze, params)
         self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         self.makeNNInput = params.MAKE_NN_INPUT
+        if beliefState is not None:
+            self.beliefState = np.copy(beliefState)
         
         self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
         self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
-        
+
+    def updateInternalBeliefState(self, obs, reward, newPos, action):
+        if self.beliefState is not None:
+            updateBeliefState(self.maze, self.beliefState, newPos, obs, action)  
     
     def getVValue(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nnV.predict(nnInput)[0][0]
     
     def updateVValue(self, x, y, value):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nnV.train(nnInput, value)
     
     def getPValues(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nnP.predict(nnInput)[0]
     
     def updatePValues(self, x, y, values):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nnP.train(nnInput, values)
 
 
@@ -374,6 +405,8 @@ class QVLearning(Algorithm):
         self.BETA = params.BETA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
+        self.maze = maze
+        self.beliefState = None # Overridden in neural version when in experiment 2
 
         self.pos = maze.start
 
@@ -386,7 +419,9 @@ class QVLearning(Algorithm):
     def getQValues(self, x, y): return NotImplementedError
     def updateQValues(self, x, y, values): return NotImplementedError
     
-    def update(self, reward, newPos, action):
+    def update(self, reward, newPos, action, obs):
+        self.updateInternalBeliefState(obs, reward, newPos, action)
+
         oldX, oldY = self.pos
         newX, newY = newPos
         
@@ -421,34 +456,39 @@ class QVLearningNormal(QVLearning):
 
 
 class QVLearningNeuronal(QVLearning):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, beliefState=None):
         super().__init__(maze, params)
         self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         self.makeNNInput = params.MAKE_NN_INPUT
+        if beliefState is not None:
+            self.beliefState = np.copy(beliefState)
         
         self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
         self.nnQ = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
 
-    
+    def updateInternalBeliefState(self, obs, reward, newPos, action):
+        if self.beliefState is not None:
+            updateBeliefState(self.maze, self.beliefState, newPos, obs, action)
+
     def getVValue(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nnV.predict(nnInput)[0][0]
     
     def updateVValue(self, x, y, value):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nnV.train(nnInput, value)
         
     def getQValues(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nnQ.predict(nnInput)[0]
 
     def updateQValues(self, x, y, values):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nnQ.train(nnInput, values)
 
 
@@ -458,6 +498,8 @@ class ActorCritic(Algorithm):
         self.BETA = params.BETA
         self.GAMMA = params.GAMMA
         self.TEMP = params.TEMP
+        self.maze = maze
+        self.beliefState = None # Overridden in neural version when in experiment 2
         
         self.pos = maze.start
 
@@ -470,7 +512,9 @@ class ActorCritic(Algorithm):
     def getPValues(self, x, y): return NotImplementedError
     def updatePValues(self, x, y, values): return NotImplementedError
 
-    def update(self, reward, newPos, action):
+    def update(self, reward, newPos, action, obs):
+        self.updateInternalBeliefState(obs, reward, newPos, action)
+
         oldX, oldY = self.pos
         newX, newY = newPos
 
@@ -507,33 +551,39 @@ class ActorCriticNormal(ActorCritic):
     
 
 class ActorCriticNeuronal(ActorCritic):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, beliefState=None):
         super().__init__(maze, params)
         self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
         self.makeNNInput = params.MAKE_NN_INPUT
+        if beliefState is not None:
+            self.beliefState = np.copy(beliefState)
         
         self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
         self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
     
+    def updateInternalBeliefState(self, obs, reward, newPos, action):
+        if self.beliefState is not None:
+            updateBeliefState(self.maze, self.beliefState, newPos, obs, action)
+
     def getVValue(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nnV.predict(nnInput)[0][0]
     
     def updateVValue(self, x, y, value):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nnV.train(nnInput, value)
     
     def getPValues(self, x, y):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         return self.nnP.predict(nnInput)[0]
     
     def updatePValues(self, x, y, values):
         goalX, goalY = self.goal
-        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
+        nnInput = self.makeNNInput(self.beliefState, x, y, self.obstacles, goalX, goalY)
         self.nnP.train(nnInput, values)
     
     

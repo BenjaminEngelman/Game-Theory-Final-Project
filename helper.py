@@ -1,11 +1,10 @@
 import numpy as np
 
+
 def boltzmann(values, temp):
-	boltzmannValues = np.exp(values / temp)
-	boltzmannProbabilities = boltzmannValues / boltzmannValues.sum()
-	return boltzmannProbabilities
-
-
+    boltzmannValues = np.exp(values / temp)
+    boltzmannProbabilities = boltzmannValues / boltzmannValues.sum()
+    return boltzmannProbabilities
 
 
 ##################
@@ -14,10 +13,12 @@ def boltzmann(values, temp):
 import json
 import numpy
 
+
 def convertToJsonSerializable(data):
-	if type(data) == numpy.ndarray:
-		data = data.tolist()
-	return data
+    if type(data) == numpy.ndarray:
+        data = data.tolist()
+    return data
+
 
 def saveToFile(filename, data):
     with open(filename, 'w') as f:
@@ -25,28 +26,34 @@ def saveToFile(filename, data):
             data = convertToJsonSerializable(data)
         elif type(data) == tuple:
             data = tuple([convertToJsonSerializable(x) for x in data])
-			
 
         json.dump(data, f)
 
+
 def readFromFile(filename):
-	with open(filename) as f:
-		return json.load(f)
+    with open(filename) as f:
+        return json.load(f)
+
 
 def remap_keys(mapping):
     return [{'key': k, 'value': v} for k, v in mapping.items()]
 
+
 def demap_keys(mapping):
     return {tuple(element['key']): element['value'] for element in mapping}
 
+
 def saveComplexJson(filename, data):
-	saveToFile(filename, remap_keys(data))
+    saveToFile(filename, remap_keys(data))
+
 
 def readComplexJson(filename):
-	return demap_keys(readFromFile(filename))
+    return demap_keys(readFromFile(filename))
+
 
 def removeEmptyListValues(d):
-	return {k: v for k, v in d.items() if len(v) > 0}
+    return {k: v for k, v in d.items() if len(v) > 0}
+
 
 ##################
 #    PARALLEL    #
@@ -54,24 +61,26 @@ def removeEmptyListValues(d):
 
 from multiprocessing import Pool
 
+
 def noop(*args, **kwargs):
-	pass
+    pass
+
 
 def parallelize(addAsyncJobs, numProcesses=4, jobFinishedCallback=None):
-	jobs = {}
-	results = {}
+    jobs = {}
+    results = {}
 
-	pool = Pool(processes=numProcesses)
-	addAsyncJobs(jobs, pool)
-	
-	# Put job results in results
-	for key, job in jobs.items():
-	    results[key] = job.get()
+    pool = Pool(processes=numProcesses)
+    addAsyncJobs(jobs, pool)
 
-	    if jobFinishedCallback:
-	    	jobFinishedCallback(key)
+    # Put job results in results
+    for key, job in jobs.items():
+        results[key] = job.get()
 
-	pool.close()
-	pool.join() 
+        if jobFinishedCallback:
+            jobFinishedCallback(key)
 
-	return results
+    pool.close()
+    pool.join()
+
+    return results

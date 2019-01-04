@@ -15,7 +15,8 @@ PENALTY = -2
 REWARD_GOAL = 100
 REWARD_MOVE = -0.1
 
-ALL_POSITIONS = [(x,y) for x in range(WIDTH) for y in range(HEIGHT)]
+ALL_POSITIONS = [(x, y) for x in range(WIDTH) for y in range(HEIGHT)]
+
 
 class Maze:
 
@@ -93,12 +94,11 @@ class Maze:
         neighbors = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
         return [n for n in neighbors if not self.isOutOfBounds(n) and n not in self.obstacles]
 
-
     def hasSolution(self):
         """ 
         Returns whether there is a path from the start to the goal.
         """
-        toExplore = set([self.start])
+        toExplore = {self.start}
         explored = set([])
         while toExplore:
             pos = toExplore.pop()
@@ -110,7 +110,7 @@ class Maze:
             for neighbor in self.neighbors(pos):
                 if neighbor not in explored:
                     toExplore.add(neighbor)
-        
+
         return False
 
     def isObstacle(self, position):
@@ -145,13 +145,12 @@ class Maze:
                 observation[i] = 0 if observation[i] == 1 else 0
 
         return observation
-    
+
     def getProbabilityOfSeeingWallObservationAt(self, seenWall, s):
-        if (self.isObstacle(s) or self.isOutOfBounds(s)) == seenWall: # if seen correctly
+        if (self.isObstacle(s) or self.isOutOfBounds(s)) == seenWall:  # if seen correctly
             return 0.9
         else:
             return 0.1
-
 
 
 #########################
@@ -170,10 +169,26 @@ def createSimpleMaze():
     return Maze(start, goal, obstacles)
 
 
-def createDynamicGoalMaze():
+def createDynamicStartMaze():
     """
     Creates a maze with the goal placed at a random position.
     Used for the Experiment 2
+    """
+    goal = (4, 3)
+    obstacles = [(2, 2), (2, 3), (2, 4), (5, 1),
+                 (7, 3), (7, 4), (7, 5)]
+
+    possibleStartPos = [(x, y) for x in range(WIDTH) for y in range(
+        HEIGHT) if (x, y) != goal and (x, y) not in obstacles]
+    start = random.choice(possibleStartPos)
+
+    return Maze(start, goal, obstacles)
+
+
+def createDynamicGoalMaze():
+    """
+    Creates a maze with the goal placed at a random position.
+    Used for the Experiment 4
     """
     start = (0, 3)
     obstacles = [(2, 2), (2, 3), (2, 4), (5, 1),
@@ -181,7 +196,7 @@ def createDynamicGoalMaze():
 
     possibleGoalPos = [(x, y) for x in range(WIDTH) for y in range(
         HEIGHT) if (x, y) != start and (x, y) not in obstacles]
-    goal = possibleGoalPos[np.random.randint(len(possibleGoalPos) - 1)]
+    goal = random.choice(possibleGoalPos)
 
     return Maze(start, goal, obstacles)
 
@@ -190,6 +205,7 @@ def createDynamicObstaclesMaze():
     """
     Creates a Maze with between 4 and 8 obstacles placed 
     at random positions
+    Used for experiment 3
     """
     numObstacles = np.random.choice([4, 5, 6, 7, 8])
     start = (0, 3)
@@ -206,11 +222,11 @@ def createDynamicObstaclesMaze():
             return maze
 
 
-
 def createGeneralizedMaze():
     """
     Creates a Maze with a random goal and between 4 and 8 obstacles placed 
     at random positions 
+    Used for experiment 5
     """
     numObstacles = np.random.choice([4, 5, 6, 7, 8])
     start = (0, 3)
@@ -225,6 +241,7 @@ def createGeneralizedMaze():
         if maze.hasSolution():
             return maze
 
+
 ##########################
 ####   Belief State   ####
 ##########################
@@ -236,18 +253,20 @@ def initBeliefState(obstacles):
         beliefState[obstacle] = 0
     return beliefState
 
+
 def manathanDistance(s, newS):
     x, y = s
     newX, newY = newS
-    return abs(newX - x) + abs(newY -y)
+    return abs(newX - x) + abs(newY - y)
 
 
 def allNeighbors(x, y):
     return [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
 
+
 def T(maze, s, a, newS):
     sX, sY = s
-    deltaX, deltaY = a
+    deltaX, deltaY = ACTIONS[a]
     newX, newY = sX + deltaX, sY + deltaY
 
     if manathanDistance(s, newS) > 1:
@@ -257,9 +276,9 @@ def T(maze, s, a, newS):
         for neighbor in allNeighbors(sX, sY):
             if maze.isObstacle(neighbor) or maze.isOutOfBounds(neighbor):
                 if neighbor == (newX, newY):
-                    res += 0.8     # 80.0%
+                    res += 0.8  # 80.0%
                 else:
-                    res += 0.2 / 3 # 6.66%
+                    res += 0.2 / 3  # 6.66%
 
         return res
     elif (newX, newY) == newS:
@@ -268,16 +287,16 @@ def T(maze, s, a, newS):
         return 0.2
 
 
-
 def P(maze, observation, s):
     res = 1
     for wallObs in observation:
         res *= maze.getProbabilityOfSeeingWallObservationAt(wallObs, s)
     return res
-             
-    
+
+
 def possiblePositions(x, y):
     return allNeighbors(x, y) + [(x, y)]
+
 
 def normalisation(maze, obs, beliefState, action):
     p = 0
@@ -287,7 +306,8 @@ def normalisation(maze, obs, beliefState, action):
 
     return 1 / p
 
-def updateB(maze, beliefState, newS, obs, action):
+
+def updateBeliefState(maze, beliefState, newS, obs, action):
     # Compute new value
     newX, newY = newS
     res = 0
@@ -295,15 +315,9 @@ def updateB(maze, beliefState, newS, obs, action):
         res += T(maze, oldS, action, newS) * beliefState[oldS]
     res *= P(maze, obs, newS)
     res *= normalisation(maze, obs, beliefState, action)
-    
+
     # Update value in matrix
     beliefState[newS] = res
-
-
-
-
-
-
 
 
 if __name__ == "__main__":

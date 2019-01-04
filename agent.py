@@ -52,12 +52,13 @@ class Agent():
 
 class AgentWithSingleAlgo(Agent):
 
-    def __init__(self, maze, algo, params):
+    def __init__(self, maze, algo, params, beliefState):
         self.maze = maze
-        self.algo = algo(maze, params)
+        self.algo = algo(maze, params, beliefState)
     
     def update(self, reward, new_state, action):
-        self.algo.update(reward, new_state, action)
+        obs = self.maze.getObservation() if self.algo.beliefState is not None else None
+        self.algo.update(reward, new_state, action, obs)
 
     def chooseAction(self):
         return self.algo.getActionBoltzmannChoice()
@@ -65,7 +66,7 @@ class AgentWithSingleAlgo(Agent):
 
 class AgentWithEnsemble(Agent):
 
-    def __init__(self, maze, ensembleMethod, algoParamsList, temp, neural=False):
+    def __init__(self, maze, ensembleMethod, algoParamsList, temp, beliefState, neural=False):
         self.maze = maze
         self.temp = temp
         self.ensembleMethod = ensembleMethod
@@ -79,16 +80,17 @@ class AgentWithEnsemble(Agent):
             ]
         else:
             self.algos = [
-                QLearningNeuronal(maze, algoParamsList[0]),
-                SARSANeuronal(maze, algoParamsList[1]),
-                ActorCriticNeuronal(maze, algoParamsList[2]),
-                QVLearningNeuronal(maze, algoParamsList[3]),
-                ACLANeuronal(maze, algoParamsList[4])
+                QLearningNeuronal(maze, algoParamsList[0], beliefState),
+                SARSANeuronal(maze, algoParamsList[1], beliefState),
+                ActorCriticNeuronal(maze, algoParamsList[2], beliefState),
+                QVLearningNeuronal(maze, algoParamsList[3], beliefState),
+                ACLANeuronal(maze, algoParamsList[4], beliefState)
             ]
 
     def update(self, reward, new_state, action):
+        obs = self.maze.getObservation() if self.algos[0].beliefState is not None else None
         for algo in self.algos:
-            algo.update(reward, new_state, action)
+            algo.update(reward, new_state, action, obs)
 
     def chooseAction(self):
         return self.ensembleMethod(self.algos, self.temp)

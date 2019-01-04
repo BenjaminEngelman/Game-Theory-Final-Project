@@ -4,11 +4,17 @@
 
 ### Neural nets
 
-  - [ ] Q-learning
-  - [ ] SARSA
-  - [ ] Actor-Critic
-  - [ ] QV-learning
-  - [ ] ACLA
+  - [x] Q-learning
+  - [x] SARSA
+  - [x] Actor-Critic
+  - [x] QV-learning
+  - [x] ACLA
+
+### Belief State
+
+  - [x] Belief State
+  - [x] Maze observations
+
 
 ### Experiments
 
