@@ -139,11 +139,11 @@ if __name__ == "__main__":
     maze = createDynamicObstaclesMaze()
     maze.render()
     start = time.time()
-    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algoParamsListExp3[0])
+    agent = AgentWithSingleAlgo(maze, ACLANeuronal, algoParamsListExp3[4])
     rewards, numSteps = agent.learn(5000)
     print("Took %d s" % (time.time() - start))
-    saveToFile("results/nnQLearningRewards.json", rewards)
-    saveToFile("results/nnQLearningNumSteps.json", numSteps)
+    saveToFile("results/nnACLARewards.json", rewards)
+    saveToFile("results/nnACLANumSteps.json", numSteps)
 
 
     # maze = createDynamicObstaclesMaze()
