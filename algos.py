@@ -18,12 +18,12 @@ def getNNEncodedPosition(x, y):
     return nnPosition.reshape(-1)
 
 class ScikitNeuralNetwork():
-    def __init__(self, hidden_layer_size=60):
+    def __init__(self, hidden_layer_size, nnInputSize):
         self.nn = MLPRegressor(hidden_layer_sizes=(hidden_layer_size, ), activation='logistic')
-        self.initNN()
+        self.initNN(nnInputSize)
 
-    def initNN(self):
-        xtrain = np.random.rand(256, 2 * WIDTH * HEIGHT)
+    def initNN(self, nnInputSize):
+        xtrain = np.random.rand(256, nnInputSize)
         ytrain = np.random.rand(256, 4)
         self.nn.fit(xtrain, ytrain)
 
@@ -53,6 +53,19 @@ class KerasNeuralNetwork():
     
     def train(self, x, val):
         self.nn.train_on_batch(x, np.array([val]))
+
+
+def makeNNInput3(x, y, obstacles, goalX, goalY):
+    nnInput = np.concatenate((obstacles, getNNEncodedPosition(x, y)))
+    return nnInput.reshape(1, -1)
+
+def makeNNInput4(x, y, obstacles, goalX, goalY):
+    nnInput = np.concatenate((getNNEncodedPosition(x, y), getNNEncodedPosition(goalX, goalY)))
+    return nnInput.reshape(1, -1)
+
+def makeNNInput5(x, y, obstacles, goalX, goalY):
+    nnInput = np.concatenate((getNNEncodedPosition(x, y), getNNEncodedPosition(goalX, goalX), obstacles))
+    return nnInput.reshape(1, -1)
 
 
 class Algorithm():
@@ -151,20 +164,20 @@ class QLearningNormal(QLearning):
 class QLearningNeuronal(QLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
+        self.makeNNInput = params.MAKE_NN_INPUT
+        self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
         
 
-    def getNNInput(self, x, y):
-        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
-        return nnInput.reshape(1, -1)
-        
     def getQValues(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nn.predict(nnInput)[0]
     
     def updateQValues(self, x, y, val):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nn.train(nnInput, val)
 
 
@@ -218,20 +231,19 @@ class SARSANormal(SARSA):
 class SARSANeuronal(SARSA):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
-        
-
-    def getNNInput(self, x, y):
-        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
-        return nnInput.reshape(1, -1)
+        self.makeNNInput = params.MAKE_NN_INPUT
+        self.nn = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
         
     def getQValues(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nn.predict(nnInput)[0]
     
     def updateQValues(self, x, y, val):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nn.train(nnInput, val)
     
     
@@ -325,28 +337,32 @@ class ACLANormal(ACLA):
 class ACLANeuronal(ACLA):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
-        self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
-    
-    def getNNInput(self, x, y):
-        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
-        return nnInput.reshape(1, -1)
+        self.makeNNInput = params.MAKE_NN_INPUT
+        
+        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
+        self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
+        
     
     def getVValue(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nnV.predict(nnInput)[0][0]
     
     def updateVValue(self, x, y, value):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nnV.train(nnInput, value)
     
     def getPValues(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nnP.predict(nnInput)[0]
     
     def updatePValues(self, x, y, values):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nnP.train(nnInput, values)
 
 
@@ -407,30 +423,32 @@ class QVLearningNormal(QVLearning):
 class QVLearningNeuronal(QVLearning):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
-        self.nnQ = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
-
+        self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
+        self.makeNNInput = params.MAKE_NN_INPUT
         
+        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
+        self.nnQ = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
 
-    def getNNInput(self, x, y):
-        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
-        return nnInput.reshape(1, -1)
     
     def getVValue(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nnV.predict(nnInput)[0][0]
     
     def updateVValue(self, x, y, value):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nnV.train(nnInput, value)
         
     def getQValues(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nnQ.predict(nnInput)[0]
 
     def updateQValues(self, x, y, values):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nnQ.train(nnInput, values)
 
 
@@ -491,28 +509,31 @@ class ActorCriticNormal(ActorCritic):
 class ActorCriticNeuronal(ActorCritic):
     def __init__(self, maze, params):
         super().__init__(maze, params)
-        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
-        self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES)
+        self.goal = maze.goal
         self.obstacles = getNNEncodedObstacles(maze.obstacles)
-    
-    def getNNInput(self, x, y):
-        nnInput = np.concatenate((self.obstacles, getNNEncodedPosition(x, y)))
-        return nnInput.reshape(1, -1)
+        self.makeNNInput = params.MAKE_NN_INPUT
+        
+        self.nnV = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
+        self.nnP = ScikitNeuralNetwork(params.NUM_HIDDEN_NODES, params.NN_INPUT_SIZE)
     
     def getVValue(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nnV.predict(nnInput)[0][0]
     
     def updateVValue(self, x, y, value):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nnV.train(nnInput, value)
     
     def getPValues(self, x, y):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         return self.nnP.predict(nnInput)[0]
     
     def updatePValues(self, x, y, values):
-        nnInput = self.getNNInput(x, y)
+        goalX, goalY = self.goal
+        nnInput = self.makeNNInput(x, y, self.obstacles, goalX, goalY)
         self.nnP.train(nnInput, values)
     
     

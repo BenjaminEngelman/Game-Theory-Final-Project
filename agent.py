@@ -5,13 +5,7 @@ from helper import *
 import time
 
 
-class AlgoParams():
-    def __init__(self, alpha=None, beta=None, gamma=None, temp=None, numHiddenNodes=None):
-        self.ALPHA = alpha
-        self.BETA = beta
-        self.GAMMA = gamma
-        self.TEMP = temp
-        self.NUM_HIDDEN_NODES = numHiddenNodes
+
 
 
 class Agent():
