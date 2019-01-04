@@ -301,7 +301,8 @@ def possiblePositions(maze, x, y):
 def normalisation(maze, obs, beliefState, action):
     p = 0
     for newS in ALL_POSITIONS:
-        for oldS in ALL_POSITIONS:
+        newX, newY = newS
+        for oldS in possiblePositions(maze, newX, newY):
             p += P(maze, obs, newS) * T(maze, oldS, action, newS) * beliefState[oldS]
 
     return 1 / p
