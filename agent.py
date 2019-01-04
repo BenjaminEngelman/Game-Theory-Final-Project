@@ -33,8 +33,8 @@ class Agent():
 
             allRewardIntakes[episodeNum] = (episodeReward / self.maze.actions_counter)
             numberOfSteps[episodeNum] = self.maze.actions_counter
-            if episodeNum % 100 == 0 : 
-                print(episodeNum, self.maze.actions_counter)
+            # if episodeNum % 100 == 0 : 
+                # print(episodeNum, self.maze.actions_counter)
 
             # if episodeNum % 2500 == 2499:
             #     print("Done %d " % (episodeNum + 1))
