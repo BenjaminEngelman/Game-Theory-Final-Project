@@ -133,9 +133,9 @@ class Maze:
 
     def getObservation(self):
         observation = np.zeros(4)
-
-        for i, move in enumerate(self.neighbors(self.agent_position)):
-            if self.isOutOfBounds(move) or move in self.obstacles:
+        x, y = self.agent_position
+        for i, adjPos in enumerate(allNeighbors(x, y)):
+            if self.isOutOfBounds(adjPos) or adjPos in self.obstacles:
                 observation[i] = 1
             else:
                 observation[i] = 0
