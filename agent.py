@@ -136,6 +136,7 @@ ensemblesExp3 = [
 if __name__ == "__main__":
 
     maze = createDynamicObstaclesMaze()
+    maze.render()
     start = time.time()
     agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algoParamsListExp3[0])
     results = agent.learn(5000)
