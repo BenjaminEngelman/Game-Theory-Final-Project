@@ -139,10 +139,10 @@ ensemblesExp3 = [
 
 ####################################### EXPERIMENT 4 ###########################################
 algosExp4 = [
-    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.01, gamma=0.95, temp=1, numHiddenNodes=20)),
-    ("SARSA", SARSA, AlgoParams(alpha=0.01, gamma=0.95, temp=1, numHiddenNodes=20)),
-    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.015, beta=0.003, gamma=0.95, temp=1, numHiddenNodes=20)),
-    ("QV-Learning", QVLearning, AlgoParams(alpha=0.01, beta=0.01, gamma=0.9, temp=1/0.4, numHiddenNodes=20)),
+    ("Q-Learning", QLearningNeuronal, AlgoParams(alpha=0.005, gamma=0.95, temp=1/0.5, numHiddenNodes=20)),
+    ("SARSA", SARSA, AlgoParams(alpha=0.008, gamma=0.95, temp=1/0.6, numHiddenNodes=20)),
+    ("Actor-Critic", ActorCritic, AlgoParams(alpha=0.006, beta=0.008, gamma=0.95, temp=1/0.6, numHiddenNodes=20)),
+    ("QV-Learning", QVLearning, AlgoParams(alpha=0.012, beta=0.004, gamma=0.95, temp=1/0.6, numHiddenNodes=20)),
     ("ACLA", ACLA, AlgoParams(alpha=0.06, beta=0.006, gamma=0.98, temp=1/10, numHiddenNodes=20))
 ]
 algoParamsListExp4 = [param[2] for param in algosExp4]
