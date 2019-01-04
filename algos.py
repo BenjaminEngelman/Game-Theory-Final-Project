@@ -17,9 +17,9 @@ def getNNEncodedPosition(x, y):
     nnPosition[x, y] = 1
     return nnPosition.reshape(-1)
 
-class ScikitNeuralNetwork():
+class ScikitNeuralNetwork(hidden_layer_size=60):
     def __init__(self):
-        self.nn = MLPRegressor(hidden_layer_sizes=(60, ), activation='logistic')
+        self.nn = MLPRegressor(hidden_layer_sizes=(hidden_layer_size, ), activation='logistic')
         self.initNN()
 
     def initNN(self):
