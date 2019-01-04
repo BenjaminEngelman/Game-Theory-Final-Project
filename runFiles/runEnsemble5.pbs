@@ -6,7 +6,7 @@
 #PBS -l nodes=1:ppn=32
 
 module purge
-module load matplotlib/3.0.0-intel-2018b-Python-3.6.6
+module load scikit-learn/0.19.1-intel-2018a-Python-3.6.4
 
 cd $PBS_O_WORKDIR
 echo submit directory: $PWD
@@ -14,7 +14,7 @@ echo jobid: $PBS_JOBID
 echo hostname: $HOSTNAME
 date
 echo --- Start Job ---
-python ./clusterRunner.py ensemble 5
+python ../clusterRunner.py ensemble 5
 echo ---- End Job ----
 date
 

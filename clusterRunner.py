@@ -7,7 +7,7 @@ import sys
 NUM_STEPS = 20000
 NUM_TRIALS = 50
 
-NUM_PROCESSES = 4
+NUM_PROCESSES = 32
 
 if len(sys.argv) < 3:
     print("Not enough arguments, pass either 'single' or 'ensemble and the experiment number'")

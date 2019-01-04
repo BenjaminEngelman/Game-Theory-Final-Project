@@ -203,6 +203,90 @@ def createGeneralizedMaze():
         if maze.hasSolution():
             return maze
 
+##########################
+####   Belief State   ####
+##########################
+
+
+def initBeliefState(obstacles):
+    beliefState = np.random.uniform(size=(WIDTH, HEIGHT))
+    for obstacle in obstacles:
+        beliefState[obstacle] = 0
+    return beliefState
+
+def manathanDistance(s, newS):
+    x, y, newX, newY = s, newS
+    return abs(newX - x) + abs(newY -y)
+
+
+def neighbors(x, y):
+    return [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+
+def T(s, a, newS):
+    sX, sY = s
+    deltaX, deltaY = a
+    newX, newY = sX + deltaX, sY + deltaY
+
+    if manathanDistance(s, newS) > 1:
+        return 0
+    elif s == newS:
+        res = 0
+        for neighbor in neighbors(sX, sY):
+            if isObstacle(neighbor) or isOutOfBound(neighbor):
+                if neighbor == (newX, newY):
+                    res += 0.8     # 80.0%
+                else:
+                    res += 0.2 / 3 # 6.66%
+
+        return res
+    elif (newX, newY) == newS:
+        return 0.8
+    else:
+        return 0.2
+
+def getProbabilityOfSeeingWallObservationAt(seenWall, x, y):
+    if (isWall(x, y) or isOutOfBounds(x, y)) == seenWall: # if seen correctly
+        return 0.9
+    else:
+        return 0.1
+
+def P(observation, s):
+    x, y = s
+    res = 1
+    for wallObs in observation:
+        res *= getProbabilityOfSeeingWallObservationAt(wallObs, x, y)
+    return res
+             
+    
+def possiblePositions(x, y):
+    return neighbors(x, y) + [(x, y)]
+
+def normalisation(obs, beliefState, action):
+    p = 0
+    for newS in ALL_POSITIONS:
+        for oldS in ALL_POSITIONS:
+            p += P(obs, newS) * T(oldS, action, newS) * beliefState[oldS]
+
+    return 1 / p
+
+def updateB(beliefState, newS, obs, action):
+    # Compute new value
+    newX, newY = newS
+    res = 0
+    for oldS in possiblePositions(newX, newY):
+        res += T(oldS, action, newS) * beliefState[oldS]
+    res *= P(obs, newS)
+    res *= normalisation(obs, beliefState, action)
+    
+    # Update value in matrix
+    beliefState[newS] = res
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     env = createSimpleMaze()
