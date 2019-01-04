@@ -24,8 +24,8 @@ class Agent():
     def learn(self, episodes):
         last2500RewardIntakes = np.zeros(2500)
         rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
-        #allRewardIntakes = np.zeros(50000)
-        #numberOfSteps = np.zeros(50000)
+        allRewardIntakes = np.zeros(50000)
+        numberOfSteps = np.zeros(50000)
 
         for episodeNum in range(episodes):
             episodeReward = 0
@@ -36,20 +36,22 @@ class Agent():
                 # maze.render()
                 self.update(reward, new_state, action)
 
-            #allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
-            #numberOfSteps[episodeNum] = maze.actions_counter
+            allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
+            numberOfSteps[episodeNum] = maze.actions_counter
             print(episodeNum, self.maze.actions_counter)
-            if episodeNum % 2500 == 2499:
-                print("Done %d " % (episodeNum + 1))
-                rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
 
-            if episodeNum + 2500 >= episodes:
-                last2500RewardIntakes[episodeNum - 47500] = (episodeReward / self.maze.actions_counter)
+            # if episodeNum % 2500 == 2499:
+            #     print("Done %d " % (episodeNum + 1))
+            #     rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
+
+            # if episodeNum + 2500 >= episodes:
+            #     last2500RewardIntakes[episodeNum - 47500] = (episodeReward / self.maze.actions_counter)
 
             self.maze.reset()
 
-        return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
+        #return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
         #return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
+        return allRewardIntakes, numberOfSteps
 
 
 class AgentWithSingleAlgo(Agent):
@@ -135,11 +137,19 @@ if __name__ == "__main__":
 
     maze = createDynamicObstaclesMaze()
     start = time.time()
-    agent = AgentWithEnsemble(maze, boltzmannMultVote, algoParamsListExp3, 1/ 0.2, neural=True)
-    results = agent.learn(50000)
+    agent = AgentWithSingleAlgo(maze, QLearningNeuronal, algoParamsListExp3[0])
+    results = agent.learn(5000)
     print("Took %d s" % (time.time() - start))
     print(results)
     saveToFile("nnQLearning.json", results)
+
+    # maze = createDynamicObstaclesMaze()
+    # start = time.time()
+    # agent = AgentWithEnsemble(maze, boltzmannMultVote, algoParamsListExp3, 1/ 0.2, neural=True)
+    # results = agent.learn(50000)
+    # print("Took %d s" % (time.time() - start))
+    # print(results)
+    # saveToFile("nnQLearning.json", results)
 
 
     # for name, ensembleMethod, algoParamsList, temp in ensembles[-2:]:
