@@ -101,20 +101,20 @@ def addJobsEnsemble(jobs, pool):
             jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps, maze, beliefState))
 
 def addJobsFull(jobs, pool):
-numSteps = NUM_STEPS
-for i in range(NUM_TRIALS):
-    maze = mazeGenerator()
+    numSteps = NUM_STEPS
+    for i in range(NUM_TRIALS):
+        maze = mazeGenerator()
 
-    if getBeliefState is None:
-        beliefState = None
-    else:
-        beliefState = initBeliefState(maze.obstacles)
+        if getBeliefState is None:
+            beliefState = None
+        else:
+            beliefState = initBeliefState(maze.obstacles)
 
-    for ensembleName, ensemble, algoParams, temp in ensembles:
-        jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps, maze, beliefState))
+        for ensembleName, ensemble, algoParams, temp in ensembles:
+            jobs[(ensembleName, i)] = pool.apply_async(runTrialEnsemble, (ensemble, algoParams, temp, numSteps, maze, beliefState))
 
-    for algorithmName, algorithm, algoParams in algos:
-        jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams, numSteps, maze, beliefState))
+        for algorithmName, algorithm, algoParams in algos:
+            jobs[(algorithmName, i)] = pool.apply_async(runTrialSingleAlgorithm, (algorithm, algoParams, numSteps, maze, beliefState))
 
 
 #def jobDone(key):
