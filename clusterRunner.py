@@ -23,7 +23,7 @@ if expNum not in [3, 4, 5]:
     print("Invalid experiment, pass either 3, 4 or 5")
     exit(0)
 
-resultsFilename = "%s-%d.json" % (mode, expNum)
+resultsFilename = "results/%s-%d.json" % (mode, expNum)
 if expNum == 3:
     algoParams = algoParamsListExp3
     algos = algosExp3
