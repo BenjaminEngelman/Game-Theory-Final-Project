@@ -112,8 +112,9 @@ class Maze:
                     toExplore.add(neighbor)
         
         return False
-            
 
+    def isObstacle(position):
+        return position in self.obstacles
 
     def render(self):
         print("-" * (WIDTH + 2))
