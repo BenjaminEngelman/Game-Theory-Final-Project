@@ -5,13 +5,7 @@ from helper import *
 import time
 
 
-class AlgoParams():
-    def __init__(self, alpha=None, beta=None, gamma=None, temp=None, numHiddenNodes=None):
-        self.ALPHA = alpha
-        self.BETA = beta
-        self.GAMMA = gamma
-        self.TEMP = temp
-        self.NUM_HIDDEN_NODES = numHiddenNodes
+
 
 
 class Agent():
@@ -37,8 +31,8 @@ class Agent():
                 # maze.render()
                 self.update(reward, new_state, action)
 
-            allRewardIntakes[episodeNum] = (episodeReward / maze.actions_counter)
-            numberOfSteps[episodeNum] = maze.actions_counter
+            allRewardIntakes[episodeNum] = (episodeReward / self.maze.actions_counter)
+            numberOfSteps[episodeNum] = self.maze.actions_counter
             if episodeNum % 100 == 0 : 
                 print(episodeNum, self.maze.actions_counter)
 
