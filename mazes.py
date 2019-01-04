@@ -15,6 +15,7 @@ PENALTY = -2
 REWARD_GOAL = 100
 REWARD_MOVE = -0.1
 
+ALL_POSITIONS = [(x,y) for x in range(WIDTH) for y in range(HEIGHT)]
 
 class Maze:
 
