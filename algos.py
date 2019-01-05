@@ -121,7 +121,8 @@ class Algorithm():
         """
         Returns the index of the most probable action (used in majority voting)
         """
-        return np.argmax(self.getBoltzmannProbabilities(pos))
+        return np.argmax(self.getValues(pos))
+        # return np.argmax(self.getBoltzmannProbabilities(pos))
 
 
 class QLearning(Algorithm):

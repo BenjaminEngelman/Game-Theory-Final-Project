@@ -97,11 +97,12 @@ class AgentWithEnsemble(Agent):
 
 if __name__ == "__main__":
 
-    # maze = createDynamicObstaclesMaze()
-    # maze.render()
-    # start = time.time()
-    # agent = AgentWithSingleAlgo(maze, ACLANeuronal, algoParamsListExp3[4])
-    # rewards, numSteps = agent.learn(5000)
+    from experimentConf import *
+    maze = createSimpleMaze()
+    maze.render()
+    start = time.time()
+    agent = AgentWithEnsemble(maze, majorityVote, algoParamsListExp1, 1 / 1.6, None)
+    rewards, numSteps = agent.learn(20000)
     # print("Took %d s" % (time.time() - start))
     # saveToFile("results/nnACLARewards.json", rewards)
     # saveToFile("results/nnACLANumSteps.json", numSteps)
