@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#PBS -l walltime=10:00:00
+#PBS -l walltime=20:00:00
 #PBS -l mem=2gb
 #PBS -m abe
 #PBS -M grbonaer@vub.ac.be
