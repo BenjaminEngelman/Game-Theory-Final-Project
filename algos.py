@@ -14,7 +14,13 @@ def getNNEncodedObstacles(obstacles):
 
 def getNNEncodedPosition(x, y):
     nnPosition = np.zeros(shape=(WIDTH, HEIGHT))
-    nnPosition[x, y] = 1
+    try:
+        nnPosition[x, y] = 1
+    except IndexError as e:
+        print(x, y)
+        print(WIDTH, HEIGHT)
+        raise e
+
     return nnPosition.reshape(-1)
 
 class ScikitNeuralNetwork():
