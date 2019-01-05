@@ -112,9 +112,10 @@ class Algorithm():
         """
         Returns a list containing the ranking of each action (used in rank voting).
         """
-        probabilities = self.getBoltzmannProbabilities(pos).tolist()
-        seq = sorted(probabilities)
-        ranks = np.array([seq.index(p) for p in probabilities])
+        values = self.getValues(pos).tolist()
+        seq = sorted(values)
+        ranks = np.array([seq.index(p) for p in values])
+
         return ranks
 
     def getMostProbableAction(self, pos=None):

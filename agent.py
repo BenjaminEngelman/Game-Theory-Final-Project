@@ -101,7 +101,7 @@ if __name__ == "__main__":
     maze = createSimpleMaze()
     maze.render()
     start = time.time()
-    agent = AgentWithEnsemble(maze, majorityVote, algoParamsListExp1, 1 / 1.6, None)
+    agent = AgentWithEnsemble(maze, rankVote, algoParamsListExp1, 1 / 0.6, None)
     rewards, numSteps = agent.learn(20000)
     # print("Took %d s" % (time.time() - start))
     # saveToFile("results/nnACLARewards.json", rewards)
