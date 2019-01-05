@@ -67,7 +67,9 @@ def makeNNInput4(beliefState, x, y, obstacles, goalX, goalY):
     return nnInput.reshape(1, -1)
 
 def makeNNInput5(beliefState, x, y, obstacles, goalX, goalY):
-    nnInput = np.concatenate((getNNEncodedPosition(x, y), getNNEncodedPosition(goalX, goalX), obstacles))
+    a = getNNEncodedPosition(x, y)
+    b = getNNEncodedPosition(goalX, goalX)
+    nnInput = np.concatenate((a, b, obstacles))
     return nnInput.reshape(1, -1)
 
 
