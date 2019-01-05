@@ -14,13 +14,7 @@ def getNNEncodedObstacles(obstacles):
 
 def getNNEncodedPosition(x, y):
     nnPosition = np.zeros(shape=(WIDTH, HEIGHT))
-    try:
-        nnPosition[x, y] = 1
-    except IndexError as e:
-        print(x, y)
-        print(WIDTH, HEIGHT)
-        raise e
-
+    nnPosition[x, y] = 1
     return nnPosition.reshape(-1)
 
 class ScikitNeuralNetwork():
@@ -74,7 +68,16 @@ def makeNNInput4(beliefState, x, y, obstacles, goalX, goalY):
 
 def makeNNInput5(beliefState, x, y, obstacles, goalX, goalY):
     a = getNNEncodedPosition(x, y)
-    b = getNNEncodedPosition(goalX, goalX)
+    try:
+        b = getNNEncodedPosition(goalX, goalX)
+    except IndexError as e:
+        print(beliefState)
+        print(x, y)
+        print(obstacles)
+        print(goalX, goalY)
+        print(WIDTH, HEIGHT)
+        raise e
+    
     nnInput = np.concatenate((a, b, obstacles))
     return nnInput.reshape(1, -1)
 
