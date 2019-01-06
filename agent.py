@@ -72,11 +72,11 @@ class AgentWithEnsemble(Agent):
         self.ensembleMethod = ensembleMethod
         if not neural:
             self.algos = [
-                QLearningNormal(maze, algoParamsList[0]),
-                SARSANormal(maze, algoParamsList[1]),
-                ActorCriticNormal(maze, algoParamsList[2]),
-                QVLearningNormal(maze, algoParamsList[3]),
-                ACLANormal(maze, algoParamsList[4])
+                QLearningNormal(maze, algoParamsList[0], None),
+                SARSANormal(maze, algoParamsList[1], None),
+                ActorCriticNormal(maze, algoParamsList[2], None),
+                QVLearningNormal(maze, algoParamsList[3], None),
+                ACLANormal(maze, algoParamsList[4], None)
             ]
         else:
             self.algos = [

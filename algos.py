@@ -161,7 +161,7 @@ class QLearning(Algorithm):
         self.pos = newPos
 
 class QLearningNormal(QLearning):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, dummy):
         super().__init__(maze, params)
         self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
@@ -237,7 +237,7 @@ class SARSA(Algorithm):
         self.pos = newPos
 
 class SARSANormal(SARSA):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, dummy):
         super().__init__(maze, params)
         self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
 
@@ -345,7 +345,7 @@ class ACLA(Algorithm):
         self.pos = newPos
 
 class ACLANormal(ACLA):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, dummy):
         super().__init__(maze, params)
         self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
         self.pValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
@@ -439,7 +439,7 @@ class QVLearning(Algorithm):
         self.pos = newPos
 
 class QVLearningNormal(QVLearning):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, dummy):
         super().__init__(maze, params)
         self.qValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
         self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
@@ -534,7 +534,7 @@ class ActorCritic(Algorithm):
         self.pos = newPos
 
 class ActorCriticNormal(ActorCritic):
-    def __init__(self, maze, params):
+    def __init__(self, maze, params, dummy):
         super().__init__(maze, params)
         self.vValues = np.zeros(shape=(WIDTH, HEIGHT))
         self.pValues = np.zeros(shape=(WIDTH, HEIGHT, 4))
