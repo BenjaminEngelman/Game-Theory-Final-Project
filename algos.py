@@ -68,7 +68,15 @@ def makeNNInput4(beliefState, x, y, obstacles, goalX, goalY):
 
 def makeNNInput5(beliefState, x, y, obstacles, goalX, goalY):
     a = getNNEncodedPosition(x, y)
-    b = getNNEncodedPosition(goalX, goalX)
+    try:
+        b = getNNEncodedPosition(goalX, goalY)
+    except IndexError as e:
+        print(x, y)
+        print(WIDTH, HEIGHT)
+        print(goalX, goalY)
+        print(obstacles)
+        print(beliefState)
+        raise e
     nnInput = np.concatenate((a, b, obstacles))
     return nnInput.reshape(1, -1)
 
