@@ -76,7 +76,10 @@ def runTrialSingleAlgorithm(algorithm, params, numSteps, maze, beliefState):
     return allRewardIntakes, numberOfSteps
 
 def runTrialEnsemble(ensemble, algoParams, temp, numSteps, maze, beliefState):
-    agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=True)
+    if expNum == 1:
+        agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=False)
+    else:  
+        agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=True)
     allRewardIntakes, numberOfSteps = agent.learn(numSteps)
     return allRewardIntakes, numberOfSteps
 
