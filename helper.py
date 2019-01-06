@@ -17,16 +17,18 @@ import numpy
 def convertToJsonSerializable(data):
     if type(data) == numpy.ndarray:
         data = data.tolist()
+    elif type(data) == tuple:
+        data = tuple([convertToJsonSerializable(x) for x in data])
+    elif type(data) == list:
+        data = [convertToJsonSerializable(x) for x in data]
+    elif type(data) == dict:
+        data = dict([(convertToJsonSerializable(k), convertToJsonSerializable(v)) for k,v in data.items()])
     return data
 
 
 def saveToFile(filename, data):
     with open(filename, 'w') as f:
-        if type(data) == numpy.ndarray:
-            data = convertToJsonSerializable(data)
-        elif type(data) == tuple:
-            data = tuple([convertToJsonSerializable(x) for x in data])
-
+        data = convertToJsonSerializable(data)
         json.dump(data, f)
 
 
