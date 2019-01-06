@@ -26,6 +26,8 @@ def saveToFile(filename, data):
             data = convertToJsonSerializable(data)
         elif type(data) == tuple:
             data = tuple([convertToJsonSerializable(x) for x in data])
+        elif type(data) == dict:
+            data = dict([(convertToJsonSerializable(k), convertToJsonSerializable(v)) for k,v in data.items()])
 
         json.dump(data, f)
 
