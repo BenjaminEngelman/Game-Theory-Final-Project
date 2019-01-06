@@ -19,11 +19,18 @@ if mode not in ['single', 'ensemble', 'full']:
     exit(0)
 
 expNum = int(sys.argv[2])
-if expNum not in [2, 3, 4, 5]:
+if expNum not in [1, 2, 3, 4, 5]:
     print("Invalid experiment, pass either 2, 3, 4 or 5")
     exit(0)
 
 resultsFilename = "results/%s-%d.json" % (mode, expNum)
+
+if expNum == 1:
+    algoParams = algoParamsListExp1
+    algos = algosExp1
+    ensembles = ensemblesExp1
+    mazeGenerator = createSimpleMaze
+    getBeliefState = None
 
 if expNum == 2:
     algoParams = algoParamsListExp2
@@ -69,7 +76,10 @@ def runTrialSingleAlgorithm(algorithm, params, numSteps, maze, beliefState):
     return allRewardIntakes, numberOfSteps
 
 def runTrialEnsemble(ensemble, algoParams, temp, numSteps, maze, beliefState):
-    agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=True)
+    if expNum == 1:
+        agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=False)
+    else:  
+        agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=True)
     allRewardIntakes, numberOfSteps = agent.learn(numSteps)
     return allRewardIntakes, numberOfSteps
 
