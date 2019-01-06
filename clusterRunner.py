@@ -26,6 +26,8 @@ if expNum not in [1, 2, 3, 4, 5]:
 resultsFilename = "results/%s-%d.json" % (mode, expNum)
 
 if expNum == 1:
+    NUM_STEPS = 50000
+    NUM_TRIALS = 500
     algoParams = algoParamsListExp1
     algos = algosExp1
     ensembles = ensemblesExp1
