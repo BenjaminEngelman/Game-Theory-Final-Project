@@ -14,7 +14,7 @@ echo jobid: $PBS_JOBID
 echo hostname: $HOSTNAME
 date
 echo --- Start Job ---
-python ../clusterRunner.py full 2
+python ../clusterRunner.py full 1
 echo ---- End Job ----
 date
 
