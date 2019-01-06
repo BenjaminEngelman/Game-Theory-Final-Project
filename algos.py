@@ -67,7 +67,9 @@ def makeNNInput4(beliefState, x, y, obstacles, goalX, goalY):
     return nnInput.reshape(1, -1)
 
 def makeNNInput5(beliefState, x, y, obstacles, goalX, goalY):
-    nnInput = np.concatenate((getNNEncodedPosition(x, y), getNNEncodedPosition(goalX, goalX), obstacles))
+    a = getNNEncodedPosition(x, y)
+    b = getNNEncodedPosition(goalX, goalX)
+    nnInput = np.concatenate((a, b, obstacles))
     return nnInput.reshape(1, -1)
 
 
@@ -112,16 +114,18 @@ class Algorithm():
         """
         Returns a list containing the ranking of each action (used in rank voting).
         """
-        probabilities = self.getBoltzmannProbabilities(pos).tolist()
-        seq = sorted(probabilities)
-        ranks = np.array([seq.index(p) for p in probabilities])
+        values = self.getValues(pos).tolist()
+        seq = sorted(values)
+        ranks = np.array([seq.index(p) for p in values])
+
         return ranks
 
     def getMostProbableAction(self, pos=None):
         """
         Returns the index of the most probable action (used in majority voting)
         """
-        return np.argmax(self.getBoltzmannProbabilities(pos))
+        return np.argmax(self.getValues(pos))
+        # return np.argmax(self.getBoltzmannProbabilities(pos))
 
 
 class QLearning(Algorithm):
