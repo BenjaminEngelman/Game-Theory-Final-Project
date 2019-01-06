@@ -4,8 +4,8 @@ from mazes import *
 from experimentConf import *
 import sys
 
-NUM_STEPS = 50000
-NUM_TRIALS = 500
+NUM_STEPS = 10000
+NUM_TRIALS = 50
 
 NUM_PROCESSES = 32
 
