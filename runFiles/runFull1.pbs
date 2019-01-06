@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #PBS -l walltime=20:00:00
-#PBS -l mem=3gb
+#PBS -l mem=2gb
 #PBS -m abe
-#PBS -M David.Engelman@vub.be
+#PBS -M grbonaer@vub.ac.be
 #PBS -l nodes=1:ppn=32
 
 module purge
@@ -14,7 +14,7 @@ echo jobid: $PBS_JOBID
 echo hostname: $HOSTNAME
 date
 echo --- Start Job ---
-python ../clusterRunner.py full 3
+python ../clusterRunner.py full 1
 echo ---- End Job ----
 date
 
