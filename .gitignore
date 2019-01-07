@@ -7,3 +7,4 @@ results.bak/
 runFiles/results/full-*.json
 runFiles/run*.pbs.o*
 runFiles/run*.pbs.e*
+results/full-*.json

@@ -17,10 +17,10 @@ class Agent():
         raise NotImplementedError
 
     def learn(self, episodes):
-        last2500RewardIntakes = np.zeros(2500)
         delay = episodes / 20
         rewardIntakesOverEpisode = np.zeros(20)
-       
+        lastRewardIntakes = np.zeros(int(delay))
+
         for episodeNum in range(episodes):
             episodeReward = 0
             while not self.maze.isDone():
@@ -33,21 +33,21 @@ class Agent():
             #allRewardIntakes[episodeNum] = (episodeReward / self.maze.actions_counter)
             #numberOfSteps[episodeNum] = self.maze.actions_counter
             # if episodeNum % 100 == 0 : 
-                # print(episodeNum, self.maze.actions_counter)
+                #print(episodeNum, self.maze.actions_counter)
 
             if episodeNum % delay == delay - 1:
                 # print("Done %d " % (episodeNum + 1))
-                rewardIntakesOverEpisode[episodeNum // delay] = (episodeReward / self.maze.actions_counter)
+                rewardIntakesOverEpisode[int(episodeNum // delay)] = (episodeReward / self.maze.actions_counter)
 
-            if episodeNum + 2500 >= episodes:
-                last2500RewardIntakes[episodeNum - (episodes - 2500)] = (episodeReward / self.maze.actions_counter)
+            if episodeNum + delay >= episodes:
+                lastRewardIntakes[episodeNum - (episodes - int(delay))] = (episodeReward / self.maze.actions_counter)
 
             self.maze.reset()
 
         #return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
         #return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
         #return allRewardIntakes, numberOfSteps
-        return last2500RewardIntakes, rewardIntakesOverEpisode
+        return lastRewardIntakes, rewardIntakesOverEpisode
 
 
 class AgentWithSingleAlgo(Agent):
