@@ -17,11 +17,10 @@ class Agent():
         raise NotImplementedError
 
     def learn(self, episodes):
-        # last2500RewardIntakes = np.zeros(2500)
-        # rewardIntakesEvery2500Episodes = np.zeros(episodes // 2500)
-        allRewardIntakes = np.zeros(episodes)
-        numberOfSteps = np.zeros(episodes)
-
+        last2500RewardIntakes = np.zeros(2500)
+        delay = episodes / 20
+        rewardIntakesOverEpisode = np.zeros(20)
+       
         for episodeNum in range(episodes):
             episodeReward = 0
             while not self.maze.isDone():
@@ -31,23 +30,24 @@ class Agent():
                 # maze.render()
                 self.update(reward, new_state, action)
 
-            allRewardIntakes[episodeNum] = (episodeReward / self.maze.actions_counter)
-            numberOfSteps[episodeNum] = self.maze.actions_counter
+            #allRewardIntakes[episodeNum] = (episodeReward / self.maze.actions_counter)
+            #numberOfSteps[episodeNum] = self.maze.actions_counter
             # if episodeNum % 100 == 0 : 
                 # print(episodeNum, self.maze.actions_counter)
 
-            # if episodeNum % 2500 == 2499:
-            #     print("Done %d " % (episodeNum + 1))
-            #     rewardIntakesEvery2500Episodes[episodeNum // 2500] = (episodeReward / self.maze.actions_counter)
+            if episodeNum % delay == delay - 1:
+                # print("Done %d " % (episodeNum + 1))
+                rewardIntakesOverEpisode[episodeNum // delay] = (episodeReward / self.maze.actions_counter)
 
-            # if episodeNum + 2500 >= episodes:
-            #     last2500RewardIntakes[episodeNum - 47500] = (episodeReward / self.maze.actions_counter)
+            if episodeNum + 2500 >= episodes:
+                last2500RewardIntakes[episodeNum - (episodes - 2500)] = (episodeReward / self.maze.actions_counter)
 
             self.maze.reset()
 
         #return last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
         #return allRewardIntakes, numberOfSteps, last2500RewardIntakes.mean(), rewardIntakesEvery2500Episodes.sum()
-        return allRewardIntakes, numberOfSteps
+        #return allRewardIntakes, numberOfSteps
+        return last2500RewardIntakes, rewardIntakesOverEpisode
 
 
 class AgentWithSingleAlgo(Agent):
