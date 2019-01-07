@@ -5,3 +5,4 @@ results.bak/
 .ipynb_checkpoints/
 .idea/
 runFiles/results/full-*.json
+results/full-*.json
