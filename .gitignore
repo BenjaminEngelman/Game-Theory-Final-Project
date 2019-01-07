@@ -5,3 +5,5 @@ results.bak/
 .ipynb_checkpoints/
 .idea/
 runFiles/results/full-*.json
+runFiles/run*.pbs.o*
+runFiles/run*.pbs.e*
