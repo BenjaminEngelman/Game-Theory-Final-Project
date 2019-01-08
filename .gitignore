@@ -6,3 +6,7 @@ results.bak/
 .idea/
 runFiles/results/full-4.json
 results/full-1.json
+runFiles/run*.pbs.o*
+runFiles/run*.pbs.e*
+
+

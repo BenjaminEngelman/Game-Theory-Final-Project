@@ -17,7 +17,7 @@ class Agent():
         raise NotImplementedError
 
     def learn(self, episodes):
-        delay = episodes / 20
+        delay = int(episodes // 20)
         rewardIntakesOverEpisode = np.zeros(20)
         lastRewardIntakes = np.zeros(int(delay))
 
@@ -35,7 +35,7 @@ class Agent():
             # if episodeNum % 100 == 0 : 
                 #print(episodeNum, self.maze.actions_counter)
 
-            if episodeNum % delay == delay - 1:
+            if (episodeNum % delay) == (delay - 1):
                 # print("Done %d " % (episodeNum + 1))
                 rewardIntakesOverEpisode[int(episodeNum // delay)] = (episodeReward / self.maze.actions_counter)
 
