@@ -54,6 +54,8 @@ elif expNum == 4:
     ensembles = ensemblesExp4
     mazeGenerator = createDynamicGoalMaze
     getBeliefState = None
+    NUM_STEPS = 50000
+    NUM_TRIALS = 250
 
 
 elif expNum == 5:
@@ -62,6 +64,8 @@ elif expNum == 5:
     ensembles = ensemblesExp5
     mazeGenerator = createGeneralizedMaze
     getBeliefState = None
+    NUM_STEPS = 50000
+    NUM_TRIALS = 250
 
 print("Saving results of experiment %d in %s mode in filename %s" % (expNum, mode, resultsFilename))
 
@@ -78,7 +82,7 @@ def runTrialSingleAlgorithm(algorithm, params, numSteps, maze, beliefState):
     return allRewardIntakes, numberOfSteps
 
 def runTrialEnsemble(ensemble, algoParams, temp, numSteps, maze, beliefState):
-    if expNum == 1:
+    if expNum in [1, 4, 5]:
         agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=False)
     else:  
         agent = AgentWithEnsemble(maze, ensemble, algoParams, temp, beliefState, neural=True)

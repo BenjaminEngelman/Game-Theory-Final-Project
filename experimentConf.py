@@ -64,8 +64,7 @@ ensemblesExp3 = [
     ("Majority", majorityVote, algoParamsListExp3, 1 / 2.6),
     ("Rank", rankVote, algoParamsListExp3, 1 / 0.8),
     ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp3, 1/ 0.2),
-    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),
-    
+    ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp3, 1 / 1),    
 ]
 ################################################################################################
 
@@ -78,6 +77,7 @@ algosExp4 = [
     ("QV-Learning", QVLearningNeuronal, AlgoParams(alpha=0.012, beta=0.004, gamma=0.95, temp=1/0.6, numHiddenNodes=20, makeNNInput=makeNNInput4, nnInputSize=2*54)),
     ("ACLA", ACLANeuronal, AlgoParams(alpha=0.06, beta=0.006, gamma=0.98, temp=1/10, numHiddenNodes=20, makeNNInput=makeNNInput4, nnInputSize=2*54))
 ]
+algosExp4 = algosExp1
 algoParamsListExp4 = [param[2] for param in algosExp4]
 
 ensemblesExp4 = [
@@ -86,6 +86,7 @@ ensemblesExp4 = [
     ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp4, 1 / 0.2),
     ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp4, 1 / 1),
 ]
+ensemblesExp4 = ensemblesExp1
 ################################################################################################
 
 
@@ -98,6 +99,7 @@ algosExp5 = [
     ("QV-Learning", QVLearningNeuronal, AlgoParams(alpha=0.002, beta=0.001, gamma=0.95, temp=1/0.2, numHiddenNodes=100, makeNNInput=makeNNInput5, nnInputSize=3*54)),
     ("ACLA", ACLANeuronal, AlgoParams(alpha=0.1, beta=0.001, gamma=0.98, temp=1/5, numHiddenNodes=100, makeNNInput=makeNNInput5, nnInputSize=3*54))
 ]
+algosExp5 = algosExp1
 algoParamsListExp5 = [param[2] for param in algosExp5]
 
 ensemblesExp5 = [
@@ -106,3 +108,4 @@ ensemblesExp5 = [
     ("Boltzmann Multiplication", boltzmannMultVote, algoParamsListExp5, 1/ 0.2),
     ("Boltzmann Addition", boltzmannAddVote, algoParamsListExp5, 1 / 1),
 ]
+ensemblesExp5 = ensemblesExp1
