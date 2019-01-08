@@ -25,7 +25,7 @@ Contains the implementations off all the environments (mazes) needed for the 5 e
 Script used to run the experiments on a cluster and distribute the trials across multiple cores. 
 
 
-## TODO
+## Tasks
 
 ### Neural nets
 
@@ -43,11 +43,11 @@ Script used to run the experiments on a cluster and distribute the trials across
 
 ### Experiments
 
-  - [ ] Exp 1 (Simple maze + base algo)
-  - [ ] Exp 2 (Partially obsebable maze + neural net)
-  - [ ] Exp 3 (Dynamic obstacles maze + neural net)
-  - [ ] Exp 4 (Dynamic Goal maze + neural net) 
-  - [ ] Exp 5 (Generalized maze + neural net)
+  - [x] Exp 1 (Simple maze + base algo)
+  - [x] Exp 2 (Partially obsebable maze + neural net)
+  - [x] Exp 3 (Dynamic obstacles maze + neural net)
+  - [x] Exp 4 (Dynamic Goal maze + neural net) 
+  - [x] Exp 5 (Generalized maze + neural net)
 
 ### Base Algorithms
 
