@@ -4,5 +4,5 @@ data.json
 results.bak/
 .ipynb_checkpoints/
 .idea/
-runFiles/results/full-*.json
-results/full-*.json
+runFiles/results/full-4.json
+results/full-1.json
