@@ -1,5 +1,30 @@
 # Game-Theory-Final-Project
 
+## Outlook
+
+### algos.py
+
+Contains the implementation of all the RL algorithm. Each algorithm has two version :
+  - One version using Tables for the value-functions
+  - One version using neural networks to approximate the values of the value-functions
+  
+### agent.py
+
+Contains the implementation of the agent used in the 5 experiments
+
+### experimentConf.py
+
+Contains all the parameters that we used for the algorithms/ensemble methods for each experiment
+
+### mazes.py
+
+Contains the implementations off all the environments (mazes) needed for the 5 experiments as well as functions to generate such environments.
+
+### clusterRunner.py
+
+Script used to run the experiments on a cluster and distribute the trials across multiple cores. 
+
+
 ## TODO
 
 ### Neural nets
